@@ -54,6 +54,13 @@ class LedgerEntry:
     shingles: set = field(default_factory=set)    # word 3-grams of norm
     entities: dict = field(default_factory=dict)  # kind -> set of values (email, domain, upi, phone, ...)
 
+    def to_dict(self):
+        """JSON-ready: enums as text, sets as sorted lists. Shingles are only a count (large, used for matching)."""
+        return {"id": self.id, "run_id": self.run_id, "step": self.step, "source_kind": self.source_kind,
+                "origin": self.origin, "integrity": self.integrity.value,
+                "confidentiality": self.confidentiality.value, "text": self.text,
+                "entities": {k: sorted(v) for k, v in self.entities.items()}, "shingle_count": len(self.shingles)}
+
 
 @dataclass
 class Match:
