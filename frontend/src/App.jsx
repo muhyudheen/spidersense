@@ -1,9 +1,16 @@
 import { useState } from 'react'
 import { PAGES } from './pages/index.js'
+import StatusPill from './StatusPill.jsx'
 
 export default function App() {
   const [pageId, setPageId] = useState(PAGES[0].id)
+  const [audit, setAudit] = useState(null)
   const Page = PAGES.find((p) => p.id === pageId).component
+
+  function onAudit(result) {
+    setAudit(result)
+    setPageId('findings')
+  }
 
   return (
     <div className="app">
@@ -11,6 +18,7 @@ export default function App() {
         <div className="brand">
           <span aria-hidden="true">🕷️</span> SpiderSense
         </div>
+        <StatusPill audit={audit} />
       </header>
 
       <nav className="sidebar" aria-label="Pages">
@@ -27,7 +35,7 @@ export default function App() {
       </nav>
 
       <main className="main">
-        <Page />
+        <Page audit={audit} onAudit={onAudit} />
       </main>
     </div>
   )

@@ -1,0 +1,4 @@
+[{"name": "prelim", "title": "TatHack prelim delay model data", "target": "Delay_Hours",
+  "description": "The organizers' prelim training data, 5,000-row sample"},
+ {"name": "clean", "title": "Clean control (breast cancer)", "target": "target",
+  "description": "A well-known clean dataset; nothing should be flagged"}]

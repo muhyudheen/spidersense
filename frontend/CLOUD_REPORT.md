@@ -29,3 +29,42 @@ The dashboard in `frontend/` is built by a Claude Code cloud session, managed by
 
 **What the backend needs**
 - Nothing yet. From 14:15 the dashboard expects FastAPI on `127.0.0.1:8000` with the endpoints in the brief's API contract (`/api/health`, `/api/demo-datasets`, `/api/audit`, `/api/audit/demo/{name}`).
+
+---
+
+## Commit 2 · 12:09 IST, 9 Oct
+**Commit message:** `Add upload page and status header`
+
+**What I built**
+- **Status pill** in the header, always visible: grey "No audit yet" before any audit, red "TINGLING · N findings" (pulsing dot) when `status` is `tingling`, green "CALM · no findings" when `calm`. N is the length of the response's `findings` list.
+- **Audit page:**
+  - **Demo buttons** at the top, one large card per entry of `GET /api/demo-datasets`, showing title, description and target. A click calls `POST /api/audit/demo/{name}`.
+  - **Upload:** drag and drop, or click to pick one `.csv`. Only the first 64 KB is read in the browser to get the header line. Quoted names (`"Delay, Hours"`), doubled quotes, CRLF and a BOM are handled, and empty names (e.g. a pandas index column) are dropped. A non-`.csv` file gets a clear error.
+  - **Dropdowns:** Target (required), and Split, Group and Time (optional, "None" by default). The optional lists exclude the target column, and picking a column as target clears it from the optional ones.
+  - **Run audit** stays disabled until a target is chosen. It sends `POST /api/audit` as multipart with `file`, `target` and only the optional columns that were chosen.
+  - While a request runs: "Spider-sense tingling…" with a spinner, and all buttons disabled. On success the app goes to Findings.
+- **API layer** (`src/api.js`): one place for all calls. Errors show the API's `detail` (a string, or a 422 list shown as `field: message`); with no `detail` they show "Request failed (HTTP n)", and with no response "Could not reach the backend". It runs on the mock responses (`USE_MOCK = true`, with a 0.6 s delay so the loading state is visible) until commit 4.
+- **Mock data** (`src/mock/`): `audit_prelim.json` (the brief's response, verbatim), `audit_calm.json` (empty findings, `status: "calm"`, all bars unflagged), `demo_datasets.json` (the brief's list). Development only; nothing reads them after commit 4.
+- The Findings page shows which dataset is loaded; the list and chart are commit 3.
+
+**Files changed**
+- New: `frontend/src/api.js`, `frontend/src/lib.js` (pure helpers), `frontend/src/StatusPill.jsx`, `frontend/src/mock/audit_prelim.json`, `frontend/src/mock/audit_calm.json`, `frontend/src/mock/demo_datasets.json`, `frontend/tests/lib.test.js`
+- Changed: `frontend/src/App.jsx` (holds the audit result, shows the pill), `frontend/src/pages/AuditPage.jsx`, `frontend/src/pages/FindingsPage.jsx`, `frontend/src/styles.css`, `frontend/package.json` (a `test` script using Node's built-in runner, no new package), `frontend/CLOUD_REPORT.md`
+
+**How I checked it**
+- `npm test`: 5/5 pass (CSV header parsing, error messages, pill text including "1 finding" vs "2 findings").
+- `npm run build`: succeeds.
+- Headless Chromium on `npm run dev`, with no console errors:
+  - Pill shows "No audit yet".
+  - Both demo cards appear; clicking prelim shows "Spider-sense tingling…", then Findings with a red "TINGLING · 1 finding"; clicking clean gives a green "CALM · no findings".
+  - A `.txt` file gets the error; a CSV with a quoted `"Delay, Hours"` header gives 5 columns in the Target list.
+  - Run audit is disabled until a target is chosen, and a target is removed from the optional lists.
+
+**Open problems**
+- Nothing touches the real backend yet (mock until 14:15, as planned).
+- The status pill counts `findings.length`. If the backend ever caps the list, the pill should use `counts` instead; I'll match whatever the real response does.
+
+**What the backend needs**
+- `GET /api/demo-datasets` and both audit endpoints as in the brief. For uploads, the multipart field names are exactly `file`, `target`, `split_col`, `group_col`, `time_col`, and unchosen optional fields are **left out**, not sent empty.
+- Errors as `{"detail": "..."}` with HTTP 400/422, e.g. "Target column 'x' not found".
+- **Heads-up on the clean demo:** on the breast-cancer data, single features alone reach high AUC (around 0.9 or more for a few "worst …" columns, which is real signal, not leakage). If D1 uses only a fixed AUC threshold like 0.6, the clean control will turn **tingling**. A relative rule (far stronger than the next-best feature) or a higher threshold for AUC would keep it calm. The calm mock assumes that, so its numbers are placeholders.

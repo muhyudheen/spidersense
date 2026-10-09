@@ -1,0 +1,32 @@
+{
+  "audit_id": "a1b2c3",
+  "dataset": {"name": "prelim", "rows": 5000, "columns": 7, "target": "Delay_Hours",
+              "task": "regression"},
+  "status": "tingling",
+  "counts": {"high": 1, "medium": 0, "low": 0},
+  "findings": [
+    {
+      "id": "D1-1",
+      "check": "D1",
+      "title": "Target leakage: NLP_Severity_Score predicts the target almost by itself",
+      "severity": "high",
+      "summary": "Using only NLP_Severity_Score, a tiny model reaches R² 0.83; the next-best column reaches 0.21.",
+      "evidence": {"metric": "R2", "score": 0.83, "next_best_column": "Transport_Mode",
+                   "next_best_score": 0.21, "threshold": 0.6},
+      "location": {"column": "NLP_Severity_Score"},
+      "fix": "Check how NLP_Severity_Score is computed. If it uses the target or information from after the prediction time, remove it."
+    }
+  ],
+  "d1_scores": {
+    "metric": "R2",
+    "threshold": 0.6,
+    "features": [
+      {"name": "NLP_Severity_Score", "score": 0.83, "flagged": true},
+      {"name": "Transport_Mode", "score": 0.21, "flagged": false},
+      {"name": "Origin_Node", "score": 0.19, "flagged": false},
+      {"name": "Destination_Node", "score": 0.05, "flagged": false},
+      {"name": "Condition_Flag", "score": 0.0, "flagged": false},
+      {"name": "Leg_Type", "score": 0.17, "flagged": false}
+    ]
+  }
+}
