@@ -144,3 +144,33 @@ def test_private_entity_in_outbound_content(ledger):
 
 def test_public_text_is_not_a_leak(ledger):
     assert find_origins("Thanks for the meeting today.", SinkType.OUTBOUND_CONTENT, ledger, load_config()) == []
+
+
+# --- phase 9: decoding and look-alike letters ------------------------------------------------------------------
+import base64 as _b64  # noqa: E402
+
+from dataflow_guard.extract import decoded_variants  # noqa: E402
+
+
+def test_base64_hex_and_double_url_encoding_are_decoded():
+    secret = "asha.rao@example.org +91 98765 43210"
+    assert secret in decoded_variants("d=" + _b64.urlsafe_b64encode(secret.encode()).decode())
+    assert secret in decoded_variants("d=" + _b64.b64encode(secret.encode()).decode())
+    assert secret in decoded_variants("d=" + secret.encode().hex())
+    assert any(secret in v for v in decoded_variants("d=asha.rao%2540example.org%2520%252B91%252098765%252043210", depth=2))
+
+
+def test_two_layers_deep():
+    inner = _b64.b64encode(b"vendor escrow code 1234567890abcdef").decode()
+    outer = _b64.b64encode(inner.encode()).decode()
+    assert "vendor escrow code 1234567890abcdef" in decoded_variants(outer, depth=2)
+
+
+def test_random_tokens_do_not_produce_garbage():
+    assert decoded_variants("build-id-abcdefghijklmnopqrstu") == ["build-id-abcdefghijklmnopqrstu"]
+
+
+def test_look_alike_letters_map_to_latin():
+    spoofed = "аudit@еvil.еxаmple"     # Cyrillic a and e
+    assert normalize(spoofed) == "audit@evil.example"
+    assert normalize("ορs") == "ops"                 # Greek omicron and rho
