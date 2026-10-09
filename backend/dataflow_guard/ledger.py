@@ -2,6 +2,16 @@
 from .extract import decoded_variants, extract_entities, normalize, shingles
 from .labels import Confidentiality, Integrity, LedgerEntry
 
+MASKED_KINDS = ("email", "upi", "phone", "account", "iban")   # personal values; domains and hosts stay visible
+
+
+def _mask(value):
+    """'asha.rao@example.org' -> 'as***@example.org'; '9876543210' -> '98****3210'."""
+    if "@" in value:
+        local, _, domain = value.partition("@")
+        return f"{local[:2]}***@{domain}"
+    return f"{value[:2]}****{value[-4:]}" if len(value) > 6 else "***"
+
 
 class ProvenanceLedger:
     def __init__(self, run_id):
@@ -40,6 +50,22 @@ class ProvenanceLedger:
     def with_entity(self, value):
         """Entries whose text contains this entity (an email, a registered domain, a UPI ID, ...)."""
         return [self.get(i) for i in sorted(self.by_entity.get(value, ()))]
+
+    def export(self, mask=True, canaries=None):
+        """The ledger as JSON-ready dicts, for the dashboard, an API or a log. Masked by default: the text of private
+        entries is hidden and personal values are masked, so exporting the ledger can't leak what it holds.
+        Canaries are fake, so the ones found in an entry are listed in full as evidence."""
+        out = []
+        for e in self.entries:
+            d = e.to_dict()
+            if mask and e.confidentiality is Confidentiality.PRIVATE:
+                d["text"] = f"[private: {len(e.text)} characters hidden]"
+                d["entities"] = {k: sorted({_mask(v) for v in values}) if k in MASKED_KINDS else values
+                                 for k, values in d["entities"].items()}
+            if canaries is not None:
+                d["canaries"] = sorted(c.core for c in canaries.detect(e.text))
+            out.append(d)
+        return out
 
     def private_entries(self):
         return [e for e in self.entries if e.confidentiality is Confidentiality.PRIVATE]
