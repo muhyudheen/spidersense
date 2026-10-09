@@ -18,7 +18,7 @@
     "read_file":         {"output": {"integrity": "untrusted", "confidentiality": "private"}},
     "read_customer_db":  {"output": {"integrity": "trusted", "confidentiality": "private"}},
     "get_contacts":      {"output": {"integrity": "trusted", "confidentiality": "private"}},
-    "write_scratch":     {"output": {"integrity": "trusted", "confidentiality": "public"}},
+    "write_scratch":     {"output": {"integrity": "untrusted", "confidentiality": "private"}},
     "read_scratch":      {"output": {"integrity": "untrusted", "confidentiality": "private"}},
     "send_email":        {"external": true, "sinks": {"to": "destination", "cc": "destination", "bcc": "destination",
                                                       "subject": "outbound_content", "body": "outbound_content"}},
