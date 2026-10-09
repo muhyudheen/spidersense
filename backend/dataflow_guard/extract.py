@@ -1,4 +1,6 @@
 """Normalization, entity extraction and shingling: turn text into things we can compare reliably."""
+import base64
+import binascii
 import re
 import unicodedata
 from urllib.parse import unquote, urlparse
@@ -13,12 +15,68 @@ ZERO_WIDTH = dict.fromkeys(map(ord, "\u200b\u200c\u200d\u2060\ufeff"))  # zero-w
 SECOND_LEVEL = {"co", "ac", "gov", "org", "net", "edu"}   # e.g. evil.co.in -> registered domain has 3 labels
 
 
+# Common Cyrillic and Greek look-alikes of Latin letters (lowercase): "аudit@evil.example" with a Cyrillic "а"
+CONFUSABLES = str.maketrans({  # Cyrillic (U+04xx) and Greek (U+03xx) letters that look Latin
+    "\u0430": "a", "\u0435": "e", "\u043e": "o", "\u0440": "p", "\u0441": "c", "\u0443": "y", "\u0445": "x",
+    "\u0456": "i", "\u0458": "j", "\u0455": "s", "\u0501": "d", "\u04cf": "l", "\u0432": "b", "\u043a": "k",
+    "\u043c": "m", "\u043d": "h", "\u0442": "t", "\u03b1": "a", "\u03b5": "e", "\u03b9": "i", "\u03ba": "k",
+    "\u03bd": "v", "\u03bf": "o", "\u03c1": "p", "\u03c4": "t", "\u03c5": "u", "\u03c7": "x",
+})
+
+
 def normalize(s):
-    """NFKC -> drop zero-width characters -> URL-decode once -> lowercase -> collapse spaces -> trim quotes/punctuation."""
+    """NFKC -> drop zero-width characters -> URL-decode once -> lowercase -> map look-alike letters to Latin ->
+    collapse spaces -> trim quotes/punctuation."""
     s = unicodedata.normalize("NFKC", str(s)).translate(ZERO_WIDTH)
-    s = unquote(s).lower()
+    s = unquote(s).lower().translate(CONFUSABLES)
     s = re.sub(r"\s+", " ", s).strip()
     return s.strip("\"'`.,;:!?()[]{}<> ")
+
+
+B64_TOKEN = re.compile(r"[A-Za-z0-9+/_\-]{16,}={0,2}")
+HEX_TOKEN = re.compile(r"\b(?:[0-9a-fA-F]{2}){8,}\b")
+
+
+def _printable(raw):
+    """Decoded bytes count only if they look like text (so random tokens don't produce garbage variants)."""
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    ok = sum(ch.isprintable() or ch in "\n\t" for ch in text)
+    return text if text and ok / len(text) >= 0.9 else None
+
+
+def _decode_once(text):
+    """Every text hidden one encoding layer deep: base64 (standard or URL-safe), hex, or URL-encoding."""
+    found = []
+    for token in B64_TOKEN.findall(text):
+        padded = token + "=" * (-len(token) % 4)
+        for alt in (padded, padded.replace("-", "+").replace("_", "/")):
+            try:
+                decoded = _printable(base64.b64decode(alt, validate=True))
+            except (ValueError, binascii.Error):
+                decoded = None
+            if decoded:
+                found.append(decoded)
+                break
+    for token in HEX_TOKEN.findall(text):
+        decoded = _printable(bytes.fromhex(token))
+        if decoded:
+            found.append(decoded)
+    unquoted = unquote(text)
+    if unquoted != text:
+        found.append(unquoted)
+    return found
+
+
+def decoded_variants(text, depth=2):
+    """The text plus everything hidden inside it, up to `depth` encoding layers (e.g. base64 of URL-encoded data)."""
+    variants, frontier = [str(text)], [str(text)]
+    for _ in range(depth):
+        frontier = [d for t in frontier for d in _decode_once(t) if d not in variants]
+        variants += frontier
+    return variants
 
 
 def registered_domain(host):
