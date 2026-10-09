@@ -1,0 +1,601 @@
+customer_id,age,plan,monthly_spend,tenure_months,support_tickets,contact_email,support_notes,churned
+10001,23,plus,25.5,5,3,ravi.0@example.com,Asked about upgrade.,0
+10002,62,basic,51.33,55,0,priya.1@example.com,Requested refund.,0
+10003,55,plus,69.69,53,1,fatima.2@example.com,Call back on +91 9889980280,0
+10004,43,plus,5.58,60,1,alex.3@example.com,Happy with service.,0
+10005,42,pro,41.27,35,1,john.4@example.com,Call back on +91 9815791408,1
+10006,66,basic,38.42,64,2,ravi.5@example.com,Requested refund.,0
+10007,22,basic,49.38,13,3,john.6@example.com,Asked about upgrade.,0
+10008,57,plus,15.11,31,1,lena.7@example.com,No issues.,0
+10009,29,basic,15.4,9,0,sam.8@example.com,No issues.,0
+10010,23,basic,96.15,55,3,john.9@example.com,No issues.,0
+10011,48,basic,20.15,51,1,mei.10@example.com,Requested refund.,0
+10012,73,basic,29.83,58,3,lena.11@example.com,Happy with service.,1
+10013,59,basic,32.39,55,1,omar.12@example.com,Billing question resolved.,0
+10014,61,basic,23.44,22,3,omar.13@example.com,Happy with service.,0
+10015,58,basic,59.11,5,0,lena.14@example.com,Asked about upgrade.,0
+10016,62,basic,55.55,66,0,priya.15@example.com,Billing question resolved.,0
+10017,47,basic,37.09,35,0,priya.16@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10018,25,plus,24.64,7,2,priya.17@example.com,Happy with service.,1
+10019,65,basic,34.81,66,0,alex.18@example.com,Asked about upgrade.,0
+10020,43,pro,43.96,71,0,luca.19@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10021,46,pro,21.81,32,1,priya.20@example.com,No issues.,0
+10022,39,basic,62.29,55,1,sam.21@example.com,Happy with service.,0
+10023,28,basic,82.35,3,1,sam.22@example.com,"Paid by card 4111 1111 1111 1111, please refund.",1
+10024,70,plus,107.34,7,2,luca.23@example.com,Happy with service.,0
+10025,62,pro,102.98,20,0,lena.24@example.com,Requested refund.,0
+10026,54,plus,32.23,47,3,omar.25@example.com,Requested refund.,0
+10027,40,pro,45.63,10,0,lena.26@example.com,Requested refund.,0
+10028,64,plus,36.53,3,2,alex.27@example.com,Asked about upgrade.,0
+10029,49,plus,36.43,48,3,omar.28@example.com,No issues.,1
+10030,43,basic,34.61,55,0,priya.29@example.com,No issues.,0
+10031,43,plus,41.86,53,4,fatima.30@example.com,Customer shared login: password=omar921,0
+10032,30,basic,91.73,57,1,alex.31@example.com,Asked about upgrade.,0
+10033,23,plus,52.48,58,0,lena.32@example.com,Asked about upgrade.,0
+10034,49,pro,14.47,43,0,john.33@example.com,Requested refund.,0
+10035,68,basic,79.98,37,1,fatima.34@example.com,Requested refund.,0
+10036,21,plus,48.88,61,0,ravi.35@example.com,Billing question resolved.,0
+10037,66,basic,59.6,25,1,priya.36@example.com,Requested refund.,0
+10038,65,plus,51.72,7,0,omar.37@example.com,Requested refund.,1
+10039,33,basic,53.47,54,1,priya.38@example.com,Happy with service.,0
+10040,54,pro,55.29,20,2,mei.39@example.com,Happy with service.,1
+10041,27,basic,7.12,70,4,priya.40@example.com,Happy with service.,0
+10042,61,pro,59.06,30,2,mei.41@example.com,Asked about upgrade.,0
+10043,57,pro,22.65,61,3,mei.42@example.com,Requested refund.,1
+10044,38,plus,27.92,4,0,luca.43@example.com,Billing question resolved.,0
+10045,21,plus,41.6,47,1,omar.44@example.com,No issues.,1
+10046,73,plus,118.67,32,1,luca.45@example.com,Requested refund.,0
+10047,43,pro,16.97,33,0,lena.46@example.com,Requested refund.,0
+10048,68,basic,40.53,19,1,mei.47@example.com,No issues.,0
+10049,56,plus,33.94,69,1,mei.48@example.com,Happy with service.,0
+10050,62,basic,79.19,28,1,fatima.49@example.com,Asked about upgrade.,0
+10051,61,plus,33.19,61,1,lena.50@example.com,Asked about upgrade.,0
+10052,29,basic,49.29,31,2,john.51@example.com,Asked about upgrade.,0
+10053,38,plus,17.01,4,1,omar.52@example.com,Happy with service.,1
+10054,44,plus,88.46,63,0,lena.53@example.com,Customer shared login: password=priya789,0
+10055,46,basic,10.63,14,1,lena.54@example.com,No issues.,1
+10056,20,plus,58.48,20,3,john.55@example.com,Requested refund.,0
+10057,49,plus,49.52,62,1,mei.56@example.com,No issues.,0
+10058,26,plus,54.96,64,0,alex.57@example.com,No issues.,0
+10059,60,basic,10.79,66,0,fatima.58@example.com,Asked about upgrade.,0
+10060,56,plus,32.64,31,2,john.59@example.com,Asked about upgrade.,0
+10061,70,pro,76.55,54,3,sam.60@example.com,Happy with service.,0
+10062,60,basic,130.55,24,3,luca.61@example.com,No issues.,0
+10063,38,basic,38.22,53,1,mei.62@example.com,Call back on +91 9872841803,0
+10064,73,basic,71.64,36,1,alex.63@example.com,Billing question resolved.,0
+10065,41,plus,46.03,4,0,lena.64@example.com,Billing question resolved.,1
+10066,36,basic,39.78,30,0,fatima.65@example.com,Billing question resolved.,0
+10067,69,plus,29.67,34,1,priya.66@example.com,Billing question resolved.,0
+10068,39,plus,41.76,19,0,luca.67@example.com,Requested refund.,0
+10069,22,basic,67.25,27,1,lena.68@example.com,Customer shared login: password=john537,0
+10070,44,pro,71.15,36,3,priya.69@example.com,Customer shared login: password=lena640,0
+10071,63,plus,13.17,4,0,omar.70@example.com,No issues.,0
+10072,28,basic,27.5,11,1,ravi.71@example.com,No issues.,0
+10073,44,basic,16.22,55,3,mei.72@example.com,Happy with service.,1
+10074,25,basic,43.37,25,2,luca.73@example.com,Happy with service.,0
+10075,57,basic,31.71,44,0,sam.74@example.com,Billing question resolved.,0
+10076,45,basic,53.63,41,0,luca.75@example.com,No issues.,0
+10077,36,pro,56.34,40,1,ravi.76@example.com,Asked about upgrade.,0
+10078,30,basic,3.48,30,1,sam.77@example.com,Requested refund.,0
+10079,50,basic,41.52,35,3,luca.78@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10080,56,plus,92.95,59,0,omar.79@example.com,Asked about upgrade.,0
+10081,71,plus,27.51,69,1,mei.80@example.com,Customer shared login: password=ravi122,0
+10082,42,pro,26.85,19,5,mei.81@example.com,Asked about upgrade.,0
+10083,27,plus,82.29,48,2,alex.82@example.com,No issues.,0
+10084,65,basic,73.45,69,1,priya.83@example.com,Asked about upgrade.,0
+10085,53,basic,17.82,1,0,mei.84@example.com,Requested refund.,0
+10086,57,pro,68.52,56,0,omar.85@example.com,Requested refund.,0
+10087,23,plus,21.59,36,0,alex.86@example.com,No issues.,0
+10088,35,pro,26.61,69,2,alex.87@example.com,Happy with service.,0
+10089,61,basic,17.81,42,1,fatima.88@example.com,No issues.,0
+10090,65,pro,13.07,60,1,sam.89@example.com,Asked about upgrade.,0
+10091,42,plus,45.31,12,1,sam.90@example.com,Asked about upgrade.,0
+10092,63,basic,11.15,11,3,ravi.91@example.com,Customer shared login: password=sam316,1
+10093,65,plus,46.69,66,0,sam.92@example.com,Billing question resolved.,0
+10094,40,plus,45.6,38,4,mei.93@example.com,Billing question resolved.,0
+10095,69,basic,36.9,40,3,ravi.94@example.com,Billing question resolved.,0
+10096,34,basic,28.6,13,2,mei.95@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10097,31,pro,24.14,17,1,lena.96@example.com,Asked about upgrade.,1
+10098,56,basic,15.76,59,0,john.97@example.com,Requested refund.,0
+10099,54,basic,107.88,22,2,mei.98@example.com,Billing question resolved.,0
+10100,25,basic,35.63,42,0,lena.99@example.com,Requested refund.,0
+10101,65,basic,34.7,23,3,alex.100@example.com,Customer shared login: password=mei981,1
+10102,29,pro,18.6,19,1,priya.101@example.com,Happy with service.,0
+10103,63,plus,100.38,12,1,sam.102@example.com,No issues.,0
+10104,18,basic,25.46,67,1,alex.103@example.com,Billing question resolved.,1
+10105,63,pro,50.04,67,1,priya.104@example.com,No issues.,0
+10106,62,pro,57.25,9,2,priya.105@example.com,Requested refund.,0
+10107,62,basic,45.33,26,1,alex.106@example.com,No issues.,0
+10108,55,pro,10.87,41,1,omar.107@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10109,44,basic,66.51,28,1,ravi.108@example.com,No issues.,0
+10110,58,pro,25.24,52,1,sam.109@example.com,Customer shared login: password=luca641,0
+10111,33,plus,72.95,19,1,priya.110@example.com,Billing question resolved.,0
+10112,62,plus,39.54,5,2,alex.111@example.com,Happy with service.,0
+10113,49,basic,59.75,24,3,alex.112@example.com,Requested refund.,0
+10114,44,pro,95.98,43,1,sam.113@example.com,Asked about upgrade.,0
+10115,46,basic,64.8,13,2,lena.114@example.com,Happy with service.,1
+10116,50,basic,60.79,58,1,mei.115@example.com,Requested refund.,0
+10117,20,basic,68.62,1,2,john.116@example.com,Asked about upgrade.,0
+10118,25,plus,20.92,5,1,mei.117@example.com,Requested refund.,0
+10119,31,basic,75.09,37,0,mei.118@example.com,No issues.,0
+10120,24,pro,33.5,37,2,luca.119@example.com,Happy with service.,0
+10121,43,plus,34.38,21,0,priya.120@example.com,No issues.,0
+10122,56,basic,44.27,19,0,john.121@example.com,No issues.,0
+10123,55,basic,31.06,5,1,luca.122@example.com,Billing question resolved.,0
+10124,44,basic,17.21,48,2,ravi.123@example.com,Billing question resolved.,0
+10125,66,plus,41.77,27,1,fatima.124@example.com,Customer shared login: password=luca554,0
+10126,50,pro,34.51,9,1,sam.125@example.com,Happy with service.,0
+10127,22,basic,33.54,29,1,fatima.126@example.com,Happy with service.,0
+10128,61,pro,38.57,67,2,ravi.127@example.com,Requested refund.,0
+10129,50,basic,4.01,19,2,priya.128@example.com,Requested refund.,0
+10130,54,pro,33.74,64,0,alex.129@example.com,No issues.,0
+10131,50,pro,104.06,19,1,john.130@example.com,Billing question resolved.,0
+10132,49,plus,98.62,14,0,lena.131@example.com,Requested refund.,0
+10133,23,plus,42.88,19,1,omar.132@example.com,Billing question resolved.,0
+10134,49,pro,41.79,23,2,omar.133@example.com,Billing question resolved.,1
+10135,63,basic,2.69,9,0,luca.134@example.com,Happy with service.,0
+10136,35,basic,26.48,42,1,lena.135@example.com,No issues.,0
+10137,52,basic,68.14,24,1,alex.136@example.com,Billing question resolved.,0
+10138,19,plus,30.45,51,1,priya.137@example.com,Happy with service.,0
+10139,37,plus,84.54,35,0,sam.138@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10140,42,plus,81.1,32,1,mei.139@example.com,Billing question resolved.,0
+10141,74,pro,26.05,34,0,fatima.140@example.com,No issues.,0
+10142,30,basic,45.34,12,2,fatima.141@example.com,No issues.,0
+10143,33,plus,109.58,51,4,mei.142@example.com,Requested refund.,0
+10144,41,basic,10.62,8,3,john.143@example.com,Happy with service.,0
+10145,74,basic,31.01,52,1,lena.144@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10146,66,plus,9.5,71,2,mei.145@example.com,Requested refund.,0
+10147,19,pro,19.6,55,2,sam.146@example.com,No issues.,0
+10148,31,plus,131.06,33,2,ravi.147@example.com,Happy with service.,1
+10149,64,basic,31.0,23,1,ravi.148@example.com,No issues.,0
+10150,21,plus,5.44,62,2,alex.149@example.com,Billing question resolved.,0
+10151,66,basic,17.05,19,0,ravi.150@example.com,No issues.,0
+10152,34,pro,8.42,35,0,john.151@example.com,Customer shared login: password=priya606,0
+10153,70,plus,46.65,55,0,omar.152@example.com,Requested refund.,0
+10154,34,basic,56.65,66,1,ravi.153@example.com,Asked about upgrade.,0
+10155,42,basic,75.79,66,0,priya.154@example.com,Asked about upgrade.,0
+10156,55,basic,65.61,7,2,priya.155@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,1
+10157,25,pro,11.16,64,3,sam.156@example.com,Happy with service.,0
+10158,49,basic,54.61,9,4,omar.157@example.com,No issues.,1
+10159,46,plus,37.28,42,1,fatima.158@example.com,No issues.,0
+10160,62,plus,83.38,67,3,luca.159@example.com,Requested refund.,0
+10161,74,plus,70.87,47,1,mei.160@example.com,No issues.,0
+10162,55,basic,142.37,68,0,mei.161@example.com,Happy with service.,0
+10163,41,pro,18.35,25,1,mei.162@example.com,Requested refund.,0
+10164,41,basic,15.99,23,0,lena.163@example.com,Requested refund.,0
+10165,41,plus,27.86,24,0,lena.164@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10166,64,plus,38.45,26,0,mei.165@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10167,36,plus,23.47,49,2,john.166@example.com,Asked about upgrade.,0
+10168,27,pro,19.24,33,0,lena.167@example.com,No issues.,0
+10169,37,basic,52.03,53,1,ravi.168@example.com,Asked about upgrade.,0
+10170,19,plus,27.79,30,1,lena.169@example.com,No issues.,0
+10171,24,basic,22.62,22,1,priya.170@example.com,Asked about upgrade.,1
+10172,23,basic,11.14,14,1,priya.171@example.com,Call back on +91 9819713530,0
+10173,61,basic,3.07,40,4,alex.172@example.com,Billing question resolved.,1
+10174,59,basic,100.73,64,2,lena.173@example.com,Asked about upgrade.,0
+10175,57,basic,98.74,61,1,john.174@example.com,Asked about upgrade.,0
+10176,44,basic,72.37,18,3,mei.175@example.com,No issues.,1
+10177,58,basic,60.97,34,0,luca.176@example.com,Asked about upgrade.,1
+10178,27,plus,25.69,51,1,alex.177@example.com,Happy with service.,0
+10179,69,plus,62.74,44,2,john.178@example.com,Requested refund.,0
+10180,46,basic,14.92,5,0,john.179@example.com,Requested refund.,0
+10181,71,basic,44.52,42,0,lena.180@example.com,Asked about upgrade.,0
+10182,26,basic,20.97,3,1,priya.181@example.com,Requested refund.,1
+10183,46,plus,62.93,9,0,omar.182@example.com,Requested refund.,0
+10184,57,basic,114.5,47,1,mei.183@example.com,Billing question resolved.,0
+10185,46,basic,16.98,8,1,fatima.184@example.com,Asked about upgrade.,1
+10186,43,basic,26.77,25,1,mei.185@example.com,No issues.,0
+10187,27,basic,43.9,42,3,ravi.186@example.com,Call back on +91 9883934599,0
+10188,39,basic,6.32,47,2,mei.187@example.com,Asked about upgrade.,0
+10189,31,plus,8.88,32,1,alex.188@example.com,Asked about upgrade.,0
+10190,35,plus,112.3,7,0,mei.189@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10191,56,plus,52.19,57,1,alex.190@example.com,No issues.,0
+10192,53,plus,24.5,68,1,luca.191@example.com,Customer shared login: password=john658,0
+10193,52,plus,40.44,64,1,fatima.192@example.com,Customer shared login: password=alex606,0
+10194,38,basic,27.96,54,1,ravi.193@example.com,Billing question resolved.,0
+10195,72,plus,44.89,29,0,omar.194@example.com,Asked about upgrade.,0
+10196,22,plus,28.84,63,0,john.195@example.com,Asked about upgrade.,0
+10197,37,basic,38.05,35,0,mei.196@example.com,Asked about upgrade.,0
+10198,24,plus,66.9,10,0,john.197@example.com,Requested refund.,1
+10199,37,basic,63.91,61,0,ravi.198@example.com,Requested refund.,1
+10200,72,plus,108.13,23,1,priya.199@example.com,No issues.,0
+10201,38,plus,54.9,67,0,alex.200@example.com,Asked about upgrade.,0
+10202,69,pro,42.43,27,0,priya.201@example.com,Call back on +91 9863169636,0
+10203,46,pro,118.88,62,0,ravi.202@example.com,Happy with service.,0
+10204,57,plus,35.02,39,1,lena.203@example.com,Customer shared login: password=luca526,0
+10205,44,plus,3.54,34,1,ravi.204@example.com,No issues.,0
+10206,33,plus,72.99,22,0,priya.205@example.com,No issues.,0
+10207,61,basic,50.28,60,1,luca.206@example.com,Billing question resolved.,0
+10208,73,pro,40.92,5,0,omar.207@example.com,No issues.,0
+10209,33,basic,74.33,34,0,fatima.208@example.com,No issues.,0
+10210,62,basic,29.04,27,4,omar.209@example.com,Customer shared login: password=omar509,0
+10211,32,basic,3.8,39,1,lena.210@example.com,Requested refund.,0
+10212,58,pro,75.35,19,1,mei.211@example.com,No issues.,0
+10213,62,basic,23.76,48,2,priya.212@example.com,Asked about upgrade.,1
+10214,43,basic,17.63,28,2,priya.213@example.com,Asked about upgrade.,0
+10215,60,basic,4.1,14,1,omar.214@example.com,No issues.,1
+10216,33,basic,71.04,14,3,fatima.215@example.com,Happy with service.,1
+10217,22,basic,1.94,50,2,sam.216@example.com,Asked about upgrade.,0
+10218,23,plus,95.47,19,0,lena.217@example.com,Asked about upgrade.,0
+10219,43,basic,31.43,22,0,mei.218@example.com,Customer shared login: password=priya770,0
+10220,69,pro,73.4,45,1,john.219@example.com,No issues.,0
+10221,25,pro,56.11,24,2,lena.220@example.com,Billing question resolved.,0
+10222,43,basic,133.47,28,0,alex.221@example.com,Billing question resolved.,1
+10223,58,basic,55.02,18,1,alex.222@example.com,Requested refund.,0
+10224,29,plus,93.11,25,2,lena.223@example.com,No issues.,0
+10225,59,basic,26.06,50,1,fatima.224@example.com,Requested refund.,1
+10226,35,basic,8.84,38,1,alex.225@example.com,Billing question resolved.,0
+10227,64,pro,81.34,71,3,fatima.226@example.com,No issues.,0
+10228,51,pro,8.55,55,1,mei.227@example.com,Happy with service.,0
+10229,49,plus,70.5,2,0,alex.228@example.com,Call back on +91 9895342917,0
+10230,28,basic,15.71,27,0,omar.229@example.com,Billing question resolved.,0
+10231,44,plus,51.01,21,1,priya.230@example.com,Call back on +91 9863896470,0
+10232,66,plus,135.11,42,1,luca.231@example.com,Requested refund.,0
+10233,19,basic,66.71,19,0,ravi.232@example.com,Asked about upgrade.,0
+10234,61,plus,35.14,69,1,omar.233@example.com,Billing question resolved.,0
+10235,46,basic,57.05,22,3,priya.234@example.com,Requested refund.,1
+10236,59,basic,26.87,38,1,ravi.235@example.com,Asked about upgrade.,0
+10237,55,plus,169.52,9,2,alex.236@example.com,Happy with service.,0
+10238,42,basic,22.22,65,0,priya.237@example.com,No issues.,0
+10239,35,basic,38.24,65,0,sam.238@example.com,Billing question resolved.,0
+10240,53,pro,62.58,57,0,mei.239@example.com,No issues.,0
+10241,25,pro,54.12,25,3,mei.240@example.com,Requested refund.,0
+10242,51,plus,58.6,5,1,lena.241@example.com,No issues.,0
+10243,23,pro,27.35,51,1,sam.242@example.com,Happy with service.,0
+10244,55,pro,34.0,31,0,omar.243@example.com,Happy with service.,0
+10245,53,basic,78.79,71,1,fatima.244@example.com,Billing question resolved.,0
+10246,22,basic,76.14,50,2,priya.245@example.com,Requested refund.,0
+10247,61,basic,55.06,39,3,sam.246@example.com,Billing question resolved.,0
+10248,41,basic,100.94,71,3,sam.247@example.com,Happy with service.,0
+10249,62,plus,80.94,57,0,fatima.248@example.com,Billing question resolved.,0
+10250,20,basic,74.56,33,0,sam.249@example.com,Billing question resolved.,0
+10251,28,basic,8.36,2,1,ravi.250@example.com,Requested refund.,1
+10252,46,basic,54.57,7,0,luca.251@example.com,Requested refund.,0
+10253,28,basic,47.65,32,0,mei.252@example.com,Asked about upgrade.,0
+10254,36,pro,109.62,40,1,lena.253@example.com,No issues.,0
+10255,55,basic,36.58,3,3,priya.254@example.com,Billing question resolved.,1
+10256,26,basic,44.78,9,2,alex.255@example.com,Requested refund.,1
+10257,56,basic,15.52,51,1,sam.256@example.com,No issues.,0
+10258,23,basic,18.55,54,1,luca.257@example.com,Happy with service.,0
+10259,27,plus,109.85,3,2,sam.258@example.com,Happy with service.,0
+10260,51,basic,58.44,37,1,alex.259@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10261,63,basic,135.31,6,2,fatima.260@example.com,Requested refund.,1
+10262,27,basic,36.05,52,0,lena.261@example.com,Happy with service.,0
+10263,35,pro,10.72,60,1,omar.262@example.com,Asked about upgrade.,1
+10264,70,plus,32.06,62,3,john.263@example.com,Requested refund.,1
+10265,74,plus,27.73,43,2,ravi.264@example.com,Requested refund.,0
+10266,51,plus,68.35,45,1,luca.265@example.com,Asked about upgrade.,0
+10267,43,plus,66.44,66,1,lena.266@example.com,Happy with service.,0
+10268,37,basic,60.52,44,1,john.267@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,1
+10269,52,basic,163.01,32,1,fatima.268@example.com,Billing question resolved.,0
+10270,51,plus,97.05,54,0,lena.269@example.com,No issues.,0
+10271,34,basic,19.77,42,2,priya.270@example.com,No issues.,1
+10272,19,pro,82.76,60,1,luca.271@example.com,Happy with service.,0
+10273,26,basic,42.58,38,0,priya.272@example.com,Happy with service.,0
+10274,72,plus,35.27,62,0,alex.273@example.com,Happy with service.,0
+10275,41,pro,105.22,4,3,ravi.274@example.com,Requested refund.,0
+10276,45,plus,18.63,3,0,luca.275@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10277,44,pro,79.03,8,1,alex.276@example.com,Happy with service.,0
+10278,62,plus,70.66,40,3,fatima.277@example.com,Asked about upgrade.,0
+10279,21,pro,18.3,51,2,fatima.278@example.com,Asked about upgrade.,0
+10280,22,basic,8.03,16,1,luca.279@example.com,Asked about upgrade.,0
+10281,33,basic,39.03,12,1,lena.280@example.com,Happy with service.,1
+10282,45,plus,89.32,62,3,priya.281@example.com,No issues.,0
+10283,56,basic,54.42,54,1,ravi.282@example.com,Billing question resolved.,0
+10284,45,basic,107.49,47,0,sam.283@example.com,Asked about upgrade.,0
+10285,43,pro,51.75,35,0,fatima.284@example.com,No issues.,0
+10286,71,plus,112.27,30,1,mei.285@example.com,Requested refund.,0
+10287,27,basic,25.3,2,0,lena.286@example.com,Call back on +91 9836198834,0
+10288,50,basic,60.39,14,2,ravi.287@example.com,No issues.,0
+10289,48,basic,30.17,64,1,john.288@example.com,Requested refund.,0
+10290,44,basic,38.09,25,2,ravi.289@example.com,Happy with service.,0
+10291,64,pro,44.66,51,5,fatima.290@example.com,Happy with service.,0
+10292,33,basic,54.3,50,2,luca.291@example.com,Billing question resolved.,0
+10293,72,basic,22.38,22,0,luca.292@example.com,Customer shared login: password=luca363,0
+10294,36,plus,58.33,15,0,mei.293@example.com,No issues.,0
+10295,49,basic,42.98,50,3,john.294@example.com,Customer shared login: password=luca334,0
+10296,47,basic,11.38,7,0,omar.295@example.com,Asked about upgrade.,0
+10297,66,plus,6.69,36,1,alex.296@example.com,Asked about upgrade.,0
+10298,43,plus,89.55,64,5,lena.297@example.com,Happy with service.,0
+10299,34,pro,36.63,51,0,fatima.298@example.com,Requested refund.,0
+10300,19,plus,10.11,55,0,sam.299@example.com,Asked about upgrade.,0
+10301,38,basic,124.53,6,1,ravi.300@example.com,Happy with service.,1
+10302,65,plus,62.62,15,0,sam.301@example.com,Asked about upgrade.,1
+10303,18,pro,53.25,20,1,lena.302@example.com,Requested refund.,0
+10304,69,plus,20.62,21,4,sam.303@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10305,48,pro,11.21,14,1,john.304@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10306,25,plus,47.71,70,1,fatima.305@example.com,Happy with service.,0
+10307,35,pro,40.94,12,0,john.306@example.com,Happy with service.,0
+10308,49,basic,15.77,51,2,john.307@example.com,Asked about upgrade.,0
+10309,35,plus,15.23,42,1,priya.308@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10310,24,basic,14.48,44,1,ravi.309@example.com,Requested refund.,0
+10311,55,plus,13.98,16,0,sam.310@example.com,Asked about upgrade.,0
+10312,56,plus,24.58,22,0,omar.311@example.com,Requested refund.,0
+10313,24,pro,53.26,44,1,ravi.312@example.com,Happy with service.,0
+10314,34,pro,59.92,22,1,mei.313@example.com,Requested refund.,0
+10315,31,basic,40.29,50,0,alex.314@example.com,Call back on +91 9865447851,0
+10316,55,plus,46.09,3,1,fatima.315@example.com,Asked about upgrade.,0
+10317,59,plus,61.98,6,2,lena.316@example.com,Requested refund.,0
+10318,59,basic,4.73,52,1,fatima.317@example.com,Asked about upgrade.,0
+10319,71,basic,48.83,44,0,ravi.318@example.com,No issues.,0
+10320,61,basic,99.98,4,3,ravi.319@example.com,No issues.,0
+10321,36,plus,35.88,64,1,mei.320@example.com,Requested refund.,0
+10322,24,basic,87.09,1,1,fatima.321@example.com,Billing question resolved.,0
+10323,53,pro,36.41,68,1,sam.322@example.com,Requested refund.,0
+10324,70,basic,64.93,52,3,ravi.323@example.com,Customer shared login: password=ravi841,1
+10325,73,pro,52.47,71,1,alex.324@example.com,Billing question resolved.,0
+10326,31,basic,14.25,68,0,lena.325@example.com,Billing question resolved.,0
+10327,31,plus,17.74,23,1,fatima.326@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10328,20,basic,112.27,54,0,fatima.327@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10329,26,plus,75.08,15,0,priya.328@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10330,49,pro,38.37,34,1,omar.329@example.com,Call back on +91 9830207722,0
+10331,49,pro,34.49,18,0,ravi.330@example.com,No issues.,0
+10332,39,pro,20.75,35,1,omar.331@example.com,No issues.,0
+10333,35,basic,55.78,62,2,sam.332@example.com,Customer shared login: password=omar372,0
+10334,65,basic,22.39,31,2,omar.333@example.com,Asked about upgrade.,0
+10335,44,basic,30.95,7,0,lena.334@example.com,Asked about upgrade.,1
+10336,64,basic,24.5,24,0,ravi.335@example.com,Requested refund.,0
+10337,72,plus,71.86,56,0,luca.336@example.com,Billing question resolved.,0
+10338,36,plus,37.14,38,3,ravi.337@example.com,Asked about upgrade.,1
+10339,29,plus,46.35,40,2,omar.338@example.com,Asked about upgrade.,0
+10340,72,pro,14.53,31,2,mei.339@example.com,Happy with service.,0
+10341,54,plus,24.35,21,2,john.340@example.com,Billing question resolved.,0
+10342,34,pro,47.12,43,1,lena.341@example.com,Requested refund.,0
+10343,53,basic,8.57,45,0,lena.342@example.com,No issues.,0
+10344,47,basic,34.96,64,0,priya.343@example.com,Asked about upgrade.,0
+10345,69,plus,41.25,44,2,fatima.344@example.com,Billing question resolved.,0
+10346,32,pro,12.76,71,0,fatima.345@example.com,Asked about upgrade.,0
+10347,74,basic,84.47,59,0,sam.346@example.com,Requested refund.,0
+10348,71,plus,53.85,6,0,omar.347@example.com,Billing question resolved.,0
+10349,28,plus,36.92,28,2,priya.348@example.com,No issues.,0
+10350,27,basic,22.85,28,1,luca.349@example.com,Asked about upgrade.,0
+10351,48,basic,8.19,1,0,alex.350@example.com,Happy with service.,0
+10352,20,pro,80.1,13,0,priya.351@example.com,Billing question resolved.,1
+10353,35,plus,28.63,55,6,omar.352@example.com,No issues.,0
+10354,42,basic,10.72,26,0,ravi.353@example.com,Happy with service.,1
+10355,73,pro,22.28,11,0,priya.354@example.com,Requested refund.,0
+10356,74,basic,58.05,21,0,ravi.355@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10357,26,pro,49.85,20,0,john.356@example.com,Happy with service.,0
+10358,68,basic,15.84,13,1,fatima.357@example.com,Call back on +91 9863427895,0
+10359,23,plus,89.96,8,2,alex.358@example.com,Happy with service.,1
+10360,60,basic,10.56,55,1,sam.359@example.com,No issues.,0
+10361,66,basic,102.67,59,0,alex.360@example.com,No issues.,0
+10362,68,pro,48.29,36,0,luca.361@example.com,Billing question resolved.,0
+10363,30,basic,30.47,44,1,mei.362@example.com,Requested refund.,0
+10364,68,basic,34.04,66,3,ravi.363@example.com,Happy with service.,0
+10365,24,basic,44.26,60,2,john.364@example.com,Requested refund.,0
+10366,47,plus,61.31,3,2,ravi.365@example.com,Asked about upgrade.,0
+10367,44,pro,6.6,68,0,priya.366@example.com,No issues.,0
+10368,36,pro,21.63,5,1,ravi.367@example.com,Requested refund.,0
+10369,19,basic,43.19,2,0,john.368@example.com,Billing question resolved.,1
+10370,62,basic,92.29,29,0,alex.369@example.com,Requested refund.,0
+10371,37,basic,89.92,53,1,mei.370@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10372,55,plus,116.96,6,1,lena.371@example.com,Asked about upgrade.,0
+10373,41,pro,87.03,21,3,alex.372@example.com,No issues.,0
+10374,39,plus,20.19,19,0,priya.373@example.com,Asked about upgrade.,0
+10375,68,plus,41.12,29,1,lena.374@example.com,No issues.,0
+10376,23,basic,87.39,71,4,omar.375@example.com,Call back on +91 9831429152,0
+10377,59,pro,81.66,24,0,priya.376@example.com,Happy with service.,0
+10378,60,basic,35.43,15,1,mei.377@example.com,Happy with service.,0
+10379,39,basic,60.1,9,1,lena.378@example.com,No issues.,1
+10380,32,basic,28.49,15,1,lena.379@example.com,No issues.,0
+10381,18,basic,9.68,10,0,john.380@example.com,Requested refund.,0
+10382,71,basic,37.94,41,0,alex.381@example.com,Requested refund.,0
+10383,72,basic,36.16,30,1,omar.382@example.com,Requested refund.,0
+10384,31,basic,27.36,36,1,alex.383@example.com,Requested refund.,0
+10385,19,plus,61.48,60,0,luca.384@example.com,Happy with service.,0
+10386,24,basic,34.49,42,0,sam.385@example.com,Happy with service.,1
+10387,21,basic,55.5,12,2,fatima.386@example.com,Asked about upgrade.,0
+10388,65,pro,70.95,27,3,sam.387@example.com,No issues.,0
+10389,68,plus,175.94,23,2,omar.388@example.com,Customer shared login: password=john698,1
+10390,26,plus,38.44,59,1,mei.389@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10391,60,basic,93.16,22,0,fatima.390@example.com,No issues.,0
+10392,28,pro,49.32,10,1,sam.391@example.com,Requested refund.,0
+10393,38,basic,51.45,53,0,priya.392@example.com,No issues.,0
+10394,52,basic,38.85,31,0,fatima.393@example.com,Billing question resolved.,0
+10395,59,pro,46.18,7,0,omar.394@example.com,No issues.,0
+10396,67,plus,34.75,49,2,priya.395@example.com,Call back on +91 9830782459,0
+10397,20,plus,82.41,15,0,john.396@example.com,Customer shared login: password=omar162,0
+10398,29,plus,22.35,62,1,alex.397@example.com,Asked about upgrade.,0
+10399,33,plus,9.58,60,2,fatima.398@example.com,Happy with service.,0
+10400,35,basic,26.61,27,3,fatima.399@example.com,Asked about upgrade.,0
+10401,74,basic,24.25,40,1,fatima.400@example.com,"Paid by card 4111 1111 1111 1111, please refund.",1
+10402,62,basic,26.6,41,1,priya.401@example.com,Happy with service.,0
+10403,36,basic,37.27,47,0,sam.402@example.com,Billing question resolved.,0
+10404,73,pro,26.68,5,2,lena.403@example.com,Billing question resolved.,0
+10405,46,basic,36.85,24,0,omar.404@example.com,Billing question resolved.,0
+10406,46,plus,26.75,13,0,luca.405@example.com,Asked about upgrade.,1
+10407,42,plus,56.36,50,1,mei.406@example.com,Asked about upgrade.,0
+10408,26,plus,174.9,5,3,luca.407@example.com,Asked about upgrade.,0
+10409,71,basic,48.59,37,0,john.408@example.com,No issues.,0
+10410,18,basic,27.68,52,0,john.409@example.com,Call back on +91 9854388839,0
+10411,27,pro,2.66,68,1,sam.410@example.com,Asked about upgrade.,0
+10412,31,plus,138.2,21,0,alex.411@example.com,Happy with service.,1
+10413,33,pro,50.63,1,1,alex.412@example.com,Requested refund.,1
+10414,25,pro,36.6,52,2,ravi.413@example.com,Asked about upgrade.,0
+10415,19,plus,2.92,1,2,priya.414@example.com,Happy with service.,1
+10416,56,basic,38.12,5,2,luca.415@example.com,Asked about upgrade.,0
+10417,73,plus,45.89,71,1,sam.416@example.com,No issues.,0
+10418,24,basic,26.83,62,0,luca.417@example.com,No issues.,1
+10419,34,plus,11.68,51,0,mei.418@example.com,No issues.,0
+10420,46,pro,10.88,60,1,sam.419@example.com,Happy with service.,0
+10421,70,plus,139.64,6,2,alex.420@example.com,Happy with service.,0
+10422,57,basic,44.9,7,1,omar.421@example.com,Billing question resolved.,0
+10423,61,basic,26.81,22,1,omar.422@example.com,No issues.,1
+10424,51,pro,42.89,2,0,omar.423@example.com,Customer shared login: password=fatima127,0
+10425,41,basic,40.68,64,2,ravi.424@example.com,Requested refund.,0
+10426,29,basic,10.3,4,2,sam.425@example.com,Customer shared login: password=alex684,0
+10427,67,basic,78.71,39,0,sam.426@example.com,Call back on +91 9894996589,0
+10428,63,basic,35.84,61,0,mei.427@example.com,Billing question resolved.,0
+10429,19,basic,45.36,53,0,luca.428@example.com,Call back on +91 9885281193,0
+10430,58,plus,109.85,17,1,priya.429@example.com,Happy with service.,0
+10431,22,basic,12.05,34,1,luca.430@example.com,Happy with service.,0
+10432,60,basic,21.33,39,2,omar.431@example.com,Requested refund.,0
+10433,65,basic,52.64,55,1,omar.432@example.com,Requested refund.,0
+10434,25,basic,77.64,31,2,alex.433@example.com,No issues.,0
+10435,42,basic,24.71,21,1,lena.434@example.com,Billing question resolved.,0
+10436,25,plus,25.95,57,1,lena.435@example.com,No issues.,0
+10437,50,basic,65.43,63,2,mei.436@example.com,No issues.,0
+10438,70,basic,166.07,35,1,sam.437@example.com,Happy with service.,1
+10439,22,basic,43.98,2,1,sam.438@example.com,No issues.,0
+10440,40,basic,21.27,36,0,lena.439@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10441,73,basic,16.01,64,3,alex.440@example.com,Asked about upgrade.,0
+10442,35,basic,37.18,71,3,sam.441@example.com,Requested refund.,0
+10443,25,pro,75.18,29,3,mei.442@example.com,Customer shared login: password=lena448,0
+10444,45,basic,214.03,11,0,luca.443@example.com,Happy with service.,0
+10445,46,plus,32.41,41,0,ravi.444@example.com,No issues.,0
+10446,55,basic,44.03,59,2,sam.445@example.com,No issues.,0
+10447,35,basic,124.55,68,2,luca.446@example.com,Asked about upgrade.,0
+10448,72,basic,52.0,4,0,ravi.447@example.com,Happy with service.,0
+10449,47,plus,48.84,21,2,john.448@example.com,Requested refund.,1
+10450,34,pro,108.93,34,4,sam.449@example.com,Happy with service.,0
+10451,72,basic,44.82,7,1,ravi.450@example.com,Asked about upgrade.,0
+10452,70,basic,17.3,63,1,alex.451@example.com,Billing question resolved.,0
+10453,46,basic,94.35,8,1,mei.452@example.com,Happy with service.,0
+10454,19,basic,8.51,48,1,priya.453@example.com,Customer shared login: password=mei445,0
+10455,52,plus,83.79,66,0,luca.454@example.com,No issues.,0
+10456,49,basic,41.41,49,0,alex.455@example.com,No issues.,0
+10457,26,basic,32.69,55,2,mei.456@example.com,Happy with service.,0
+10458,54,pro,32.01,19,2,sam.457@example.com,Happy with service.,0
+10459,65,basic,37.07,59,1,mei.458@example.com,Happy with service.,0
+10460,24,basic,28.94,30,0,lena.459@example.com,Billing question resolved.,0
+10461,59,plus,57.64,5,1,luca.460@example.com,No issues.,0
+10462,25,basic,29.79,27,4,mei.461@example.com,Requested refund.,0
+10463,60,basic,41.65,25,1,omar.462@example.com,Happy with service.,0
+10464,41,basic,4.91,38,0,alex.463@example.com,Asked about upgrade.,0
+10465,18,pro,41.44,19,1,ravi.464@example.com,Happy with service.,0
+10466,73,basic,28.46,33,1,lena.465@example.com,Billing question resolved.,0
+10467,27,basic,79.6,31,1,alex.466@example.com,Customer shared login: password=priya521,1
+10468,51,basic,33.8,24,0,ravi.467@example.com,Requested refund.,0
+10469,28,basic,71.75,50,0,priya.468@example.com,Requested refund.,0
+10470,71,plus,66.12,22,2,priya.469@example.com,Asked about upgrade.,0
+10471,60,basic,67.42,55,2,alex.470@example.com,Asked about upgrade.,0
+10472,63,plus,34.78,18,3,omar.471@example.com,Happy with service.,0
+10473,42,plus,43.55,62,0,priya.472@example.com,Happy with service.,0
+10474,44,pro,56.53,26,4,alex.473@example.com,Asked about upgrade.,0
+10475,54,basic,44.57,3,2,lena.474@example.com,Happy with service.,0
+10476,62,pro,33.86,11,0,priya.475@example.com,Happy with service.,0
+10477,66,plus,18.83,58,0,sam.476@example.com,Happy with service.,0
+10478,19,basic,42.02,62,3,lena.477@example.com,Billing question resolved.,0
+10479,55,plus,9.62,16,1,alex.478@example.com,No issues.,0
+10480,24,pro,4.43,43,1,luca.479@example.com,Happy with service.,0
+10481,34,basic,14.99,41,1,lena.480@example.com,Happy with service.,0
+10482,65,pro,66.87,10,1,luca.481@example.com,Requested refund.,0
+10483,32,basic,49.59,33,4,fatima.482@example.com,Asked about upgrade.,0
+10484,63,plus,67.34,50,3,luca.483@example.com,Asked about upgrade.,0
+10485,44,pro,23.09,69,3,ravi.484@example.com,Billing question resolved.,0
+10486,31,basic,85.25,61,1,lena.485@example.com,Asked about upgrade.,0
+10487,37,pro,10.89,7,0,john.486@example.com,Asked about upgrade.,0
+10488,48,basic,15.55,17,2,alex.487@example.com,Call back on +91 9861398846,1
+10489,61,plus,84.23,32,3,fatima.488@example.com,Customer shared login: password=lena283,0
+10490,52,plus,46.95,11,2,omar.489@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10491,71,basic,67.63,41,0,alex.490@example.com,No issues.,0
+10492,67,basic,49.74,1,2,priya.491@example.com,Happy with service.,0
+10493,60,basic,26.04,9,2,priya.492@example.com,No issues.,0
+10494,52,basic,13.78,4,0,alex.493@example.com,No issues.,0
+10495,34,basic,6.13,21,6,mei.494@example.com,Billing question resolved.,0
+10496,41,basic,131.56,55,0,alex.495@example.com,No issues.,0
+10497,24,basic,8.14,13,2,fatima.496@example.com,Asked about upgrade.,0
+10498,39,basic,106.48,71,1,lena.497@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10499,70,plus,45.03,20,1,john.498@example.com,Happy with service.,0
+10500,42,plus,50.88,4,1,omar.499@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10501,24,plus,48.45,24,0,sam.500@example.com,Billing question resolved.,0
+10502,55,basic,61.76,54,2,sam.501@example.com,Requested refund.,0
+10503,72,pro,21.16,8,0,mei.502@example.com,Happy with service.,0
+10504,67,plus,3.63,6,1,john.503@example.com,No issues.,0
+10505,33,basic,25.57,61,2,priya.504@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10506,43,basic,58.06,43,1,omar.505@example.com,Call back on +91 9843062496,0
+10507,48,plus,15.7,25,1,luca.506@example.com,Asked about upgrade.,0
+10508,32,basic,86.69,54,2,fatima.507@example.com,Happy with service.,0
+10509,33,plus,37.61,60,1,lena.508@example.com,Billing question resolved.,0
+10510,31,pro,14.31,26,2,priya.509@example.com,Customer shared login: password=lena272,0
+10511,74,basic,46.6,40,3,omar.510@example.com,Requested refund.,1
+10512,60,basic,57.36,1,1,ravi.511@example.com,Asked about upgrade.,0
+10513,65,pro,60.38,22,3,ravi.512@example.com,Billing question resolved.,0
+10514,64,plus,84.29,43,2,sam.513@example.com,Asked about upgrade.,0
+10515,72,basic,10.0,14,1,alex.514@example.com,Billing question resolved.,1
+10516,24,pro,84.37,71,4,lena.515@example.com,No issues.,0
+10517,68,pro,89.76,69,1,john.516@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10518,21,plus,13.81,19,0,sam.517@example.com,Billing question resolved.,0
+10519,45,plus,16.7,29,1,lena.518@example.com,Requested refund.,0
+10520,51,basic,70.06,14,1,sam.519@example.com,Happy with service.,0
+10521,38,basic,29.95,36,1,priya.520@example.com,Asked about upgrade.,0
+10522,26,plus,98.91,9,1,mei.521@example.com,Requested refund.,0
+10523,28,basic,117.85,28,2,priya.522@example.com,Asked about upgrade.,0
+10524,65,plus,14.29,40,3,priya.523@example.com,No issues.,0
+10525,36,pro,20.78,44,2,luca.524@example.com,Happy with service.,0
+10526,35,basic,44.8,43,1,sam.525@example.com,Requested refund.,0
+10527,70,plus,3.48,16,1,sam.526@example.com,Billing question resolved.,0
+10528,26,basic,6.36,57,0,luca.527@example.com,Billing question resolved.,0
+10529,70,pro,18.67,50,5,ravi.528@example.com,Requested refund.,0
+10530,70,basic,145.36,54,0,alex.529@example.com,Happy with service.,0
+10531,52,plus,50.1,34,1,lena.530@example.com,Billing question resolved.,0
+10532,27,plus,23.92,64,1,ravi.531@example.com,Integration set up with api_key=demo-not-a-real-key-7f3a9c,0
+10533,26,basic,16.58,28,0,priya.532@example.com,No issues.,0
+10534,34,plus,13.66,58,0,ravi.533@example.com,Requested refund.,0
+10535,50,plus,25.47,15,0,mei.534@example.com,No issues.,0
+10536,26,plus,24.23,18,0,priya.535@example.com,Happy with service.,0
+10537,43,plus,34.5,38,1,fatima.536@example.com,Happy with service.,0
+10538,24,pro,59.37,40,3,lena.537@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10539,48,basic,38.87,53,1,luca.538@example.com,Asked about upgrade.,0
+10540,19,plus,73.02,22,2,alex.539@example.com,Happy with service.,0
+10541,58,basic,32.53,62,0,omar.540@example.com,Requested refund.,0
+10542,21,plus,123.91,24,2,john.541@example.com,Billing question resolved.,0
+10543,29,plus,71.78,38,3,fatima.542@example.com,No issues.,0
+10544,27,basic,49.08,67,0,priya.543@example.com,Happy with service.,0
+10545,65,basic,59.51,39,0,luca.544@example.com,Happy with service.,0
+10546,21,pro,26.07,49,2,sam.545@example.com,No issues.,1
+10547,42,basic,34.05,65,1,lena.546@example.com,Asked about upgrade.,0
+10548,51,plus,32.99,70,1,omar.547@example.com,Requested refund.,0
+10549,47,basic,21.49,36,2,lena.548@example.com,Requested refund.,0
+10550,56,pro,11.38,30,0,luca.549@example.com,Asked about upgrade.,0
+10551,63,basic,61.86,14,1,john.550@example.com,Happy with service.,1
+10552,40,basic,81.23,39,0,john.551@example.com,Billing question resolved.,0
+10553,65,pro,55.64,66,1,priya.552@example.com,Happy with service.,0
+10554,36,pro,38.78,35,1,luca.553@example.com,No issues.,1
+10555,74,basic,161.77,25,1,lena.554@example.com,Billing question resolved.,0
+10556,46,basic,23.66,8,0,mei.555@example.com,Asked about upgrade.,0
+10557,59,plus,50.34,28,1,mei.556@example.com,Asked about upgrade.,0
+10558,67,pro,89.42,17,1,mei.557@example.com,Requested refund.,0
+10559,63,basic,15.11,70,0,mei.558@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10560,66,plus,65.3,38,2,lena.559@example.com,Happy with service.,0
+10561,48,plus,129.37,10,0,mei.560@example.com,Billing question resolved.,0
+10562,20,plus,41.34,5,3,luca.561@example.com,"Paid by card 4111 1111 1111 1111, please refund.",0
+10563,46,plus,47.02,61,1,omar.562@example.com,Happy with service.,0
+10564,28,plus,23.78,67,0,ravi.563@example.com,Asked about upgrade.,0
+10565,68,basic,59.02,55,1,sam.564@example.com,Requested refund.,0
+10566,31,pro,21.02,9,1,omar.565@example.com,Happy with service.,0
+10567,30,pro,39.45,7,0,john.566@example.com,Billing question resolved.,0
+10568,32,plus,9.93,15,1,mei.567@example.com,Asked about upgrade.,1
+10569,54,basic,1.47,54,1,priya.568@example.com,Happy with service.,1
+10570,50,basic,28.06,55,1,ravi.569@example.com,No issues.,0
+10571,72,plus,27.68,60,0,fatima.570@example.com,Asked about upgrade.,0
+10572,41,basic,30.12,7,1,sam.571@example.com,Happy with service.,0
+10573,34,pro,70.26,11,1,alex.572@example.com,Requested refund.,0
+10574,20,basic,82.82,64,0,omar.573@example.com,Asked about upgrade.,0
+10575,18,plus,51.92,66,0,mei.574@example.com,Billing question resolved.,0
+10576,39,pro,66.81,52,2,omar.575@example.com,Asked about upgrade.,0
+10577,70,basic,21.56,8,1,fatima.576@example.com,Happy with service.,0
+10578,47,basic,17.11,5,1,fatima.577@example.com,Asked about upgrade.,0
+10579,68,plus,59.89,4,2,ravi.578@example.com,Requested refund.,0
+10580,23,plus,14.92,50,0,omar.579@example.com,No issues.,0
+10581,23,basic,13.32,61,0,alex.580@example.com,No issues.,0
+10582,65,plus,218.66,45,0,fatima.581@example.com,Happy with service.,0
+10583,24,pro,43.43,19,2,fatima.582@example.com,Happy with service.,0
+10584,20,basic,27.7,54,2,lena.583@example.com,Asked about upgrade.,0
+10585,41,basic,25.08,5,0,ravi.584@example.com,Asked about upgrade.,0
+10586,70,basic,10.24,59,1,john.585@example.com,Asked about upgrade.,0
+10587,57,basic,51.11,64,2,mei.586@example.com,Requested refund.,0
+10588,23,basic,32.47,52,5,sam.587@example.com,No issues.,1
+10589,65,basic,81.19,63,3,mei.588@example.com,Asked about upgrade.,0
+10590,66,plus,61.25,42,2,luca.589@example.com,Billing question resolved.,0
+10591,63,basic,31.57,34,3,john.590@example.com,No issues.,0
+10592,69,pro,4.88,23,4,lena.591@example.com,Requested refund.,0
+10593,31,basic,43.52,66,1,ravi.592@example.com,Call back on +91 9812132766,0
+10594,73,basic,40.56,50,1,priya.593@example.com,Happy with service.,0
+10595,36,plus,3.63,14,2,mei.594@example.com,Happy with service.,0
+10596,63,pro,56.24,68,0,priya.595@example.com,Requested refund.,0
+10597,51,basic,14.42,5,0,omar.596@example.com,No issues.,0
+10598,62,basic,84.14,42,2,priya.597@example.com,Happy with service.,0
+10599,53,basic,38.67,14,1,omar.598@example.com,Requested refund.,0
+10600,54,plus,24.48,48,1,omar.599@example.com,No issues.,0

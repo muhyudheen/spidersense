@@ -7,12 +7,15 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 
 from agent import run_agent
 from d1 import check_d1
+from d9 import check_d9
 
 DEMO_DIR = Path(__file__).parent / "demo"
 DEMOS = {
     "prelim": ("TatHack prelim delay model data", "Delay_Hours", "The organizers' prelim training data, 5,000-row sample"),
     "titanic": ("Titanic (full passenger list)", "survived", "The famous dataset; its boat and body columns give the answer away"),
     "breast_cancer": ("Clean control (breast cancer)", "target", "A well-known clean dataset; nothing should be flagged"),
+    "customers": ("Customer churn data (privacy leaks)", "churned",
+                  "Support data with emails, phone and card numbers and passwords left in it"),
 }
 DEFAULT_GOAL = "Audit this dataset for silent ML bugs."
 app = FastAPI(title="SpiderSense")
@@ -43,7 +46,8 @@ def audit_response(df, name, target, task, findings, chart):
 
 def run_audit(df, name, target):
     check_target(df, target)
-    return audit_response(df, name, target, *check_d1(df, target))
+    task, d1_findings, chart = check_d1(df, target)
+    return audit_response(df, name, target, task, check_d9(df) + d1_findings, chart)
 
 
 async def read_upload(file):

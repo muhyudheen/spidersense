@@ -15,7 +15,7 @@ def test_health():
 
 def test_demo_list():
     names = [d["name"] for d in client.get("/api/demo-datasets").json()]
-    assert names == ["prelim", "titanic", "breast_cancer"]
+    assert names == ["prelim", "titanic", "breast_cancer", "customers"]
 
 
 @pytest.fixture(scope="module")
@@ -38,6 +38,12 @@ def test_demo_audit_follows_the_contract(titanic):
 def test_clean_demo_is_calm():
     body = client.post("/api/audit/demo/breast_cancer").json()
     assert body["status"] == "calm" and body["findings"] == []
+
+
+def test_privacy_demo_reports_d9():
+    body = client.post("/api/audit/demo/customers").json()
+    assert body["status"] == "tingling"
+    assert {f["location"]["column"] for f in body["findings"] if f["check"] == "D9"} == {"contact_email", "support_notes"}
 
 
 def test_unknown_demo_is_404():
