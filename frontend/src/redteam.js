@@ -286,3 +286,46 @@ export function countUpValue(target, t, decimals = 0) {
   const v = target * eased
   return decimals ? Number(v.toFixed(decimals)) : Math.round(v)
 }
+
+// ---- Data-Flow Guard page: the incident feed ----
+
+export const CHECK_ORDER = ['canary_leak', 'hijacked_destination', 'unverified_destination', 'injected_command',
+  'private_leak', 'secret_pattern']
+
+// Every finding the guard made in a run, across all scenarios (the guard config only), newest step first.
+export function feedIncidents(run) {
+  const order = new Map()
+  const out = []
+  for (const r of run.results) {
+    if (r.config !== GUARD_CONFIG) continue
+    if (!order.has(r.scenario)) order.set(r.scenario, order.size)
+    for (const call of r.calls || []) {
+      ;(call.findings || []).forEach((f, i) => out.push({
+        key: `${r.scenario}-${call.step}-${i}`,
+        scenario: r.scenario, title: r.title, kind: r.kind,
+        step: call.step, tool: f.tool || call.tool, arg: f.arg, outcome: call.outcome,
+        check: f.check, action: f.action, severity: f.severity, reason: f.reason,
+      }))
+    }
+  }
+  return out.sort((a, b) => b.step - a.step || order.get(a.scenario) - order.get(b.scenario))
+}
+
+// Filter chips: how many findings each check made in the feed (checks with none are left out).
+export function checkCounts(feed) {
+  const counts = Object.fromEntries(CHECK_ORDER.map((c) => [c, 0]))
+  for (const f of feed) counts[f.check] = (counts[f.check] || 0) + 1
+  return Object.entries(counts).filter(([, n]) => n > 0).map(([check, count]) => ({ check, count }))
+}
+
+// What each check actually did in the run: check → {block, escalate, warn}.
+export function actionsByCheck(feed) {
+  const out = {}
+  for (const f of feed) {
+    out[f.check] = out[f.check] || {}
+    out[f.check][f.action] = (out[f.check][f.action] || 0) + 1
+  }
+  return out
+}
+
+export const ACTION_LABELS = { block: 'BLOCK', escalate: 'HOLD FOR HUMAN', warn: 'WARN', allow: 'ALLOW' }

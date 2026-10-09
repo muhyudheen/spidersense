@@ -3,6 +3,7 @@
 export const ROUTES = [
   { id: 'overview', nav: 'overview' },
   { id: 'redteam', nav: 'redteam' },
+  { id: 'guard', nav: 'guard' },
   { id: 'audit', nav: 'audit' },
   { id: 'findings', nav: 'audit' },
   { id: 'agent', nav: 'agent' },
@@ -12,6 +13,7 @@ export const ROUTES = [
 export const NAV = [
   { id: 'overview', label: 'Overview' },
   { id: 'redteam', label: 'Red-Team Simulator' },
+  { id: 'guard', label: 'Data-Flow Guard' },
   { id: 'audit', label: 'ML Audit' },
   { id: 'agent', label: 'Agent' },
 ]

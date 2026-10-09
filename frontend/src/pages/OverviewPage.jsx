@@ -12,6 +12,8 @@ const STEPS = [
 const FEATURES = [
   { id: 'redteam', icon: '🎯', title: 'Red-Team Simulator',
     text: 'Attacks and normal tasks, each run with no guard, an allowlist, and the Data-Flow Guard. Watch every call replay.' },
+  { id: 'guard', icon: '🛡️', title: 'Data-Flow Guard',
+    text: 'How it decides: two labels, four kinds of sink, five checks. Plus every incident from the last run.' },
   { id: 'audit', icon: '🧪', title: 'ML Audit',
     text: 'Catches models that cheat: target leakage (D1) and leaked personal data (D9), plus an agent that audits for you.' },
 ]
