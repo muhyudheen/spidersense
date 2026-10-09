@@ -74,7 +74,9 @@ The Vite dev server proxies `/api` → `http://127.0.0.1:8000`. Base path: `/api
 ```json
 [{"name": "prelim", "title": "TatHack prelim delay model data", "target": "Delay_Hours",
   "description": "The organizers' prelim training data, 5,000-row sample"},
- {"name": "clean", "title": "Clean control (breast cancer)", "target": "target",
+ {"name": "titanic", "title": "Titanic (full passenger list)", "target": "survived",
+  "description": "The famous dataset; its boat and body columns give the answer away"},
+ {"name": "breast_cancer", "title": "Clean control (breast cancer)", "target": "target",
   "description": "A well-known clean dataset; nothing should be flagged"}]
 ```
 
@@ -126,6 +128,6 @@ Put this mock response in `frontend/src/mock/audit_prelim.json`, plus a calm var
 
 ## Done for CP1 when
 - `npm run build` succeeds, and `npm run dev` shows the app.
-- Both demo buttons work against the real backend: prelim → tingling with the D1 bar chart, clean → calm.
+- All three demo buttons work against the real backend: prelim and titanic → tingling with the D1 bar chart, breast_cancer → calm.
 - Uploading a CSV and picking a target works end to end.
 - It's readable on a projector, and nothing is hardcoded.

@@ -1,0 +1,11 @@
+# Demo datasets
+
+| File | Rows × cols | Target | Role | Source |
+|---|---|---|---|---|
+| `prelim.csv` | 5,000 × 7 | `Delay_Hours` | **Leaky:** `NLP_Severity_Score` is computed from the delay itself (our prelim finding DS4) | TatHack '26 prelim repo, `Code/real_dataset_builder.py` (seeded, simulated data), 5,000-row sample with `random_state=42` |
+| `titanic.csv` | 1,309 × 14 | `survived` | **Leaky:** `boat` (a lifeboat number exists only for survivors: 477 of 486 survived) and `body` (a body number exists only for the dead: 121 of 121 died) | OpenML dataset "titanic" v1 (id 40945), via `sklearn.datasets.fetch_openml` |
+| `breast_cancer.csv` | 569 × 31 | `target` | **Clean control.** Has legitimately strong features, so it's a real test that D1 doesn't raise false alarms | scikit-learn built-in (UCI Breast Cancer Wisconsin Diagnostic) |
+| `wine.csv` | 178 × 14 | `target` (3 classes) | **Clean control,** multi-class | scikit-learn built-in (UCI Wine) |
+| `diabetes.csv` | 442 × 11 | `target` (a number) | **Clean control,** regression | scikit-learn built-in (Efron et al. diabetes) |
+
+The leaky/clean labels are what we expect from each dataset's documented origin; SpiderSense must find them on its own.
