@@ -149,7 +149,7 @@ backend/
 ├── d1.py                    D1 target-leakage check
 ├── d9.py                    D9 secrets and personal-data check
 ├── demo/                    demo datasets
-└── tests/                   151 tests
+└── tests/                   153 tests
 frontend/                    React + Vite dashboard
 ```
 
