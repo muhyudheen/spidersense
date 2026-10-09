@@ -116,6 +116,20 @@ class DataFlowGuard:
                         "unverified_destination", Action.ESCALATE, "medium", tool, arg, _excerpt(strings[arg]), [],
                         f"{tool}.{arg} = {ent} appears nowhere the agent has read: it may be invented."))
 
+        #    Arguments the registry doesn't declare (e.g. an extra "cc"): an address in them that comes only from
+        #    untrusted content is still a hijack. They are not destinations for the leak check, which scans them as data.
+        if spec.known and spec.external:
+            for arg, value in strings.items():
+                if arg in sinks:
+                    continue
+                for ent in destination_entities(value):
+                    matches = destination_origins(ent, self.ledger)
+                    if matches and not is_trusted(matches) and not self._egress_allowed(ent):
+                        findings.append(Finding(
+                            "hijacked_destination", self._strict(), "high", tool, arg, _excerpt(value), matches,
+                            f"{tool}.{arg} = {ent} comes only from untrusted content ({matches[0].origin}), "
+                            f"not from the user (an argument the registry doesn't declare)."))
+
         # C. injected commands.
         for arg, kinds in sinks.items():
             if SinkType.COMMAND in kinds and arg in strings:

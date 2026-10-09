@@ -20,7 +20,7 @@ class ToolSpec:
     output_integrity: Integrity
     output_confidentiality: Confidentiality
     external: bool = False
-    sinks: dict = field(default_factory=dict)     # argument name -> list of SinkType
+    sinks: dict[str, list[SinkType]] = field(default_factory=dict)   # argument name -> sink types
     known: bool = True                            # False for tools missing from the registry (fail-safe defaults)
 
 
@@ -30,9 +30,9 @@ class GuardConfig:
     mode: str                                     # "strict" (BLOCK) or "assist" (ESCALATE to a human)
     command_containment: float
     private_overlap_min: int
-    egress_domains: set
-    egress_emails: set
-    tools: dict                                   # name -> ToolSpec
+    egress_domains: set[str]
+    egress_emails: set[str]
+    tools: dict[str, ToolSpec]                    # name -> ToolSpec
     unknown_output: tuple                         # (Integrity, Confidentiality)
     unknown_sinks: list                           # SinkTypes applied to every string argument of an unknown tool
 
@@ -69,7 +69,8 @@ def load_config(path=DEFAULT_PATH, **overrides):
             name=name, output_integrity=Integrity(out["integrity"]),
             output_confidentiality=Confidentiality(out["confidentiality"]),
             external=bool(spec.get("external", False)),
-            sinks={arg: [SinkType(kind)] for arg, kind in spec.get("sinks", {}).items()})
+            sinks={arg: [SinkType(k) for k in (kind if isinstance(kind, list) else [kind])]   # one type or several
+                   for arg, kind in spec.get("sinks", {}).items()})
     unknown_out = raw["defaults"]["unknown_tool_output"]
     cfg = GuardConfig(
         enabled=g["enabled"], mode=g["mode"],
@@ -81,6 +82,8 @@ def load_config(path=DEFAULT_PATH, **overrides):
         unknown_output=(Integrity(unknown_out["integrity"]), Confidentiality(unknown_out["confidentiality"])),
         unknown_sinks=[SinkType(s) for s in raw["defaults"]["unknown_tool"]["treat_all_string_args_as"]])
     for key, value in overrides.items():
+        if not hasattr(cfg, key):   # a typo like mdoe="assist" must not silently leave the mode unchanged
+            raise KeyError(f"unknown config override: {key!r}")
         setattr(cfg, key, value)
     if cfg.mode not in ("strict", "assist"):
         raise ValueError(f"mode must be 'strict' or 'assist', got {cfg.mode!r}")
