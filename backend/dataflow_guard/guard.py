@@ -7,7 +7,7 @@ Deterministic: no LLM calls.
 import re
 import time
 
-from .extract import extract_entities, normalize, registered_domain
+from .extract import decoded_variants, extract_entities, normalize, registered_domain
 from .labels import Action, Confidentiality, Decision, Finding, Integrity, Match, SinkType, most_severe
 from .ledger import ProvenanceLedger
 from .matcher import destination_entities, destination_origins, find_origins, is_trusted
@@ -69,10 +69,12 @@ class DataFlowGuard:
         findings = []
 
         # A. canaries: any string argument of an external tool, plus command sinks. Blocks in every mode.
+        #    Checked on the value and on everything decoded from it (base64, hex, URL-encoding, 2 layers deep).
         if self.canaries is not None:
             for arg, value in strings.items():
                 if spec.external or SinkType.COMMAND in sinks.get(arg, []):
-                    for c in self.canaries.detect(value):
+                    hits = {c.core: c for v in decoded_variants(value) for c in self.canaries.detect(v)}
+                    for c in hits.values():
                         findings.append(Finding(
                             "canary_leak", Action.BLOCK, "critical", tool, arg, _excerpt(value),
                             [Match("canary", c.placement or "planted", Integrity.TRUSTED, Confidentiality.PRIVATE, "canary", 1.0, c.core)],
@@ -123,8 +125,12 @@ class DataFlowGuard:
                 is_plain_destination = ({SinkType.DESTINATION, SinkType.FINANCIAL} & set(kinds)) and "://" not in value
                 if is_plain_destination:
                     continue
-                for m in find_origins(value, SinkType.OUTBOUND_CONTENT, self.ledger, self.cfg):
-                    leaks.append((arg, value, m))
+                seen = set()
+                for variant in decoded_variants(value):   # private data hidden by encoding is still private data
+                    for m in find_origins(variant, SinkType.OUTBOUND_CONTENT, self.ledger, self.cfg):
+                        if m.entry_id not in seen:
+                            seen.add(m.entry_id)
+                            leaks.append((arg, value, m))
             if leaks:
                 if not destinations:   # tools without a destination sink (e.g. web_fetch): the URL host
                     for value in strings.values():
