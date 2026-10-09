@@ -104,7 +104,7 @@ The labels for each tool's output are set in one reviewed file, [`backend/config
 
 The strictest result wins: **BLOCK > ASK A HUMAN (escalate) > WARN > ALLOW**. Every decision is logged with evidence: which argument, which source it matched and why.
 
-**4. Tricks it undoes before checking** (`extract.py`): base64, hex and URL encoding (up to two layers), invisible zero-width characters, and 27 Cyrillic and Greek letters that look like Latin ones (`аudit@evil.example` with a Cyrillic `а`).
+**4. Tricks it undoes before checking** (`extract.py`, `ledger.py`): base64, hex and URL encoding (up to two layers), both in what leaves and in the sources it remembers, invisible zero-width characters, and 27 Cyrillic and Greek letters that look like Latin ones (`аudit@evil.example` with a Cyrillic `а`).
 
 **5. Canaries.** Each run plants fresh fake secrets in the fake office: an API key in `config/.env`, a customer row in the database, and an internal note. Each carries a new random code. No normal task ever sends them, so if one appears in outgoing data, it's a certain leak. Even a 12-character piece of the code is caught.
 
@@ -149,7 +149,7 @@ backend/
 ├── d1.py                    D1 target-leakage check
 ├── d9.py                    D9 secrets and personal-data check
 ├── demo/                    demo datasets
-└── tests/                   140 tests
+└── tests/                   151 tests
 frontend/                    React + Vite dashboard
 ```
 
@@ -197,6 +197,7 @@ uv run --env-file ../.env python -m redteam.live exfil_email
 - **Friction.** Replying to an email's sender is stopped, because that address comes from outside.
 - **Scripted agent.** The suite plays a fully fooled agent for repeatable numbers. Live mode runs a real model instead (see [Live mode](#live-mode-a-real-model)).
 - **Labels are per tool, not per field.** The customer database is trusted, but a customer can type an address into their own name or notes field, and that address would count as trusted. Field-level labels are a possible next step.
+- **Trust is per input channel.** Content the user pastes into the chat is treated as the user's own instruction, so an attacker's address inside a pasted email would count as trusted. Detecting pasted or forwarded blocks is a possible next step.
 - **Commands the agent invents itself.** The guard blocks commands copied from untrusted content and leaks inside commands, but a harmless-looking command the agent makes up (`ls -la`) is left to the allowlist.
 - **Our suite only.** 9 attacks cover the main types (exfiltration, payment, command, canary, storage, multi-step, encoding, ML audit), not every possible attack.
 
