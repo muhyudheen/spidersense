@@ -81,6 +81,8 @@ def load_config(path=DEFAULT_PATH, **overrides):
         unknown_output=(Integrity(unknown_out["integrity"]), Confidentiality(unknown_out["confidentiality"])),
         unknown_sinks=[SinkType(s) for s in raw["defaults"]["unknown_tool"]["treat_all_string_args_as"]])
     for key, value in overrides.items():
+        if not hasattr(cfg, key):   # a typo like mdoe="assist" must not silently leave the mode unchanged
+            raise KeyError(f"unknown config override: {key!r}")
         setattr(cfg, key, value)
     if cfg.mode not in ("strict", "assist"):
         raise ValueError(f"mode must be 'strict' or 'assist', got {cfg.mode!r}")
