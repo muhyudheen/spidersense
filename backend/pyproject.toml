@@ -1,0 +1,25 @@
+[project]
+name = "spidersense-backend"
+version = "0.1.0"
+description = "SpiderSense backend: deterministic checks for silently broken ML pipelines (FastAPI)"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.143.0",
+    "pandas>=3.0.6",
+    "python-multipart>=0.0.32",  # file uploads in POST /api/audit
+    "scikit-learn>=1.9.1",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",  # FastAPI TestClient
+    "pytest>=9.1.1",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
