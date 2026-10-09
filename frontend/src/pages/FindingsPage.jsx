@@ -12,10 +12,19 @@ export default function FindingsPage({ audit }) {
     )
   }
 
-  const { dataset, counts } = audit
   return (
     <section>
       <h1>Findings</h1>
+      <AuditView audit={audit} />
+    </section>
+  )
+}
+
+// Summary line, D1 chart and finding cards for one audit response. Also used by the Agent page.
+export function AuditView({ audit }) {
+  const { dataset, counts } = audit
+  return (
+    <>
       <p className="summary">
         <strong>{dataset.name}</strong>
         <span>{dataset.rows.toLocaleString('en-IN')} rows</span>
@@ -31,7 +40,7 @@ export default function FindingsPage({ audit }) {
 
       {/* Keyed by audit, so a new audit starts with every card closed */}
       <FindingList key={audit.audit_id} findings={audit.findings} />
-    </section>
+    </>
   )
 }
 
