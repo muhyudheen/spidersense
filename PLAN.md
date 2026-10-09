@@ -61,9 +61,9 @@ Findings: {id, detector, severity, evidence (numbers, rows, line numbers), fix}
 - **Frontend:** React + Vite (the teammate's stack from the prelim), with charts for the evidence.
 
 ## Roles
-- **muhyudheen:** owns the project. Detectors, the LeakBench design, the LLM guard logic, the pitch. Reviews every commit message before it's made.
-- **abeltjoseph2005-art:** to be confirmed by the owner (dashboard testing, demo data, the pitch deck?).
-- **Claude:** pair-programs the code with tests, **manages git and the frontend** (React + Vite dashboard), proposes every commit message for review, and keeps `AI_USAGE.md` and `CLAUDE_MINUTES.md` up to date.
+- **muhyudheen:** owns the project. **Writes the backend by hand** (detectors, the LeakBench design, the LLM guard logic), the pitch. Reviews every commit message before it's made.
+- **abeltjoseph2005-art:** **manages the dashboard**, which is built by an AI coding agent (a Claude Code cloud session working from `FRONTEND_BRIEF.md`). Abel runs that session, answers its questions and checks its work.
+- **Claude Code (local session):** guides and reviews the owner's backend work, reviews the cloud session's reports (`frontend/CLOUD_REPORT.md`), and keeps `AI_USAGE.md` and `CLAUDE_MINUTES.md` up to date.
 - **Humans only:** the team's moving minutes document (Claude never writes or edits it), and answering the judges.
 
 ## Timeline: judges every 4 hours
