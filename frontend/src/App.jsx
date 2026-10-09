@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { PAGES } from './pages/index.js'
 import StatusPill from './StatusPill.jsx'
+import { USE_MOCK } from './api.js'
 
 export default function App() {
   const [pageId, setPageId] = useState(PAGES[0].id)
@@ -35,6 +36,7 @@ export default function App() {
       </nav>
 
       <main className="main">
+        {USE_MOCK && <p className="mock-banner">Mock data (VITE_USE_MOCK=1): these numbers are not from the backend.</p>}
         <Page audit={audit} onAudit={onAudit} />
       </main>
     </div>

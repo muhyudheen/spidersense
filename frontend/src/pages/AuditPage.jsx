@@ -19,9 +19,11 @@ export default function AuditPage({ onAudit }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
-  useEffect(() => {
+  function loadDemos() {
+    setDemosError('')
     getDemoDatasets().then(setDemos, (e) => setDemosError(e.message))
-  }, [])
+  }
+  useEffect(loadDemos, [])
 
   async function run(call) {
     setBusy(true)
@@ -73,7 +75,12 @@ export default function AuditPage({ onAudit }) {
       <h1>Audit</h1>
 
       <h2>Demo datasets</h2>
-      {demosError && <p className="error">Could not load the demo list: {demosError}</p>}
+      {demosError && (
+        <p className="error">
+          Could not load the demo list: {demosError}{' '}
+          <button className="retry" onClick={loadDemos}>Retry</button>
+        </p>
+      )}
       {!demos && !demosError && <p className="muted">Loading demo datasets…</p>}
       {demos && (
         <div className="demo-grid">

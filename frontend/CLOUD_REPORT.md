@@ -117,3 +117,51 @@ The dashboard in `frontend/` is built by a Claude Code cloud session, managed by
 - `d1_scores.features` with `name`, `score` and `flagged` per feature, and `threshold` as a number. The chart draws no threshold line if it isn't a number, and sorts the bars itself, so the order doesn't matter.
 - Scores rounded to 2 decimals in the response (the chart prints them as given, e.g. `0.8312345` would print in full).
 - `counts` with all three keys (missing ones show 0).
+
+---
+
+## Commit 4 · 14:18 IST, 9 Oct
+**Commit message:** `Connect dashboard to the audit API`
+
+**Read this first:** at 14:16 `master` had the backend's environment (`backend/pyproject.toml`, `uv.lock`) and the demo CSVs, but **no API code yet** (no app, no endpoints). So I could **not** test against the real backend. I tested every call against a **contract stub**: a throwaway script in my scratch folder, **not committed**, that answers exactly as the brief's API contract says. When the real backend is on `master`, I'll run it here and check again.
+
+**What I built**
+- **Real API by default.** `src/api.js` now calls `/api/demo-datasets`, `POST /api/audit/demo/{name}` and `POST /api/audit` through the Vite proxy to `127.0.0.1:8000`.
+  - The mock is used only when the dev server is started with `VITE_USE_MOCK=1 npm run dev`.
+  - Then the page shows a dashed amber banner "Mock data …: these numbers are not from the backend", so mock numbers can't be mistaken for real ones.
+  - The production build contains no mock data (checked: `Delay_Hours` doesn't appear in `dist/`).
+- **Response check** (`checkAudit` in `src/lib.js`). If an audit response lacks a field the dashboard reads (`dataset.name/rows/target/task`, `status`, `counts`, `findings`, `d1_scores.features`), the page shows "Unexpected response from the backend: missing …" instead of going blank. This makes any contract mismatch quick to spot during integration.
+- **Errors:**
+  - The API's `detail` is shown as before.
+  - A 5xx without `detail` adds "Is the backend running on port 8000?", because a stopped backend reaches the browser through the Vite proxy as HTTP 502.
+  - The demo list gets a **Retry** button, so starting the backend after the page loads doesn't need a refresh.
+- **Brief update followed:** `FRONTEND_BRIEF.md` now lists three demos (`prelim`, `titanic`, `breast_cancer`). The buttons come from the API, so no code change was needed; I updated the dev mocks to match (`breast_cancer` → calm).
+
+**Files changed**
+- `frontend/src/api.js`, `frontend/src/lib.js` (`checkAudit`, 5xx hint), `frontend/tests/lib.test.js`
+- `frontend/src/App.jsx` (mock banner), `frontend/src/pages/AuditPage.jsx` (Retry), `frontend/src/styles.css`
+- `frontend/src/mock/demo_datasets.json`, `frontend/src/mock/audit_calm.json` (renamed to the brief's new demo names)
+- `frontend/CLOUD_REPORT.md`
+
+**How I checked it**
+- `npm test`: 9/9 pass (new: `checkAudit` accepts a contract response and names what's missing; the 5xx hint).
+- `npm run build`: succeeds.
+- Headless Chromium against the contract stub on port 8000, through the real Vite proxy, with no page errors:
+  - **Demos:** 3 buttons from `GET /api/demo-datasets`. prelim → TINGLING with 6 bars (1 red); titanic → TINGLING; breast_cancer → CALM with 9 grey bars.
+  - **Upload:** `POST /api/audit` was `multipart/form-data` with exactly `file`, `target`, `split_col`, `group_col`. The time column wasn't chosen, so it wasn't sent. The Findings page showed the uploaded file's name and target.
+  - **A 400:** `{"detail": "Target column 'bad' has only one value"}` was shown word for word, and the page stayed on Audit.
+  - **Backend stopped:** "Could not load the demo list: Request failed (HTTP 502). Is the backend running on port 8000?" Starting the stub and clicking Retry → 3 demo buttons.
+  - **Mock mode** (`VITE_USE_MOCK=1`): the banner shows.
+
+**Open problems**
+- **Not yet checked against the real backend** (it has no endpoints on `master` yet). This is the CP1 risk: until `backend/` serves the API on port 8000, the Audit page shows the "backend running?" error.
+- If the real backend differs from the contract, a fix would need a commit message that isn't on the pre-approved list, so I'll ask the owner first.
+
+**What the backend needs (for CP1 at 15:00)**
+- The four endpoints exactly as in the brief, on `127.0.0.1:8000`, with demo names `prelim`, `titanic`, `breast_cancer`.
+- How to start it, so I can run it here and check end to end (e.g. `cd backend && uv run uvicorn main:app --port 8000`).
+- Earlier points still stand:
+  - multipart field names `file`, `target`, `split_col`, `group_col`, `time_col`;
+  - errors as `{"detail": ...}`;
+  - scores rounded to 2 decimals and all three `counts` keys;
+  - D1 must not flag breast_cancer, whose single features reach high AUC legitimately.

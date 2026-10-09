@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  d1Bars, errorMessage, evidenceValue, metricLabel, parseCsvHeader, sortFindings, statusPill,
+  checkAudit, d1Bars, errorMessage, evidenceValue, metricLabel, parseCsvHeader, sortFindings, statusPill,
 } from '../src/lib.js'
 
 test('parseCsvHeader reads plain names from the first line only', () => {
@@ -21,7 +21,8 @@ test('errorMessage shows FastAPI detail strings and 422 lists', () => {
   assert.equal(errorMessage(400, { detail: 'Target column not found' }), 'Target column not found')
   assert.equal(errorMessage(422, { detail: [{ loc: ['body', 'target'], msg: 'Field required' }] }),
     'target: Field required')
-  assert.equal(errorMessage(500, null), 'Request failed (HTTP 500)')
+  assert.equal(errorMessage(500, null), 'Request failed (HTTP 500). Is the backend running on port 8000?')
+  assert.equal(errorMessage(404, null), 'Request failed (HTTP 404)')
   assert.equal(errorMessage(0, null), 'Could not reach the backend')
 })
 
@@ -57,4 +58,15 @@ test('d1Bars sorts by score, highest first, and clamps bar width to 0–1', () =
   assert.deepEqual(bars.map((b) => b.name), ['b', 'a', 'c'])
   assert.equal(bars[2].width, 0)
   assert.equal(bars[2].score, -0.3)
+})
+
+test('checkAudit passes a contract response and names what is missing otherwise', () => {
+  const ok = { dataset: { name: 'p', rows: 1, target: 't', task: 'regression' }, status: 'calm',
+    counts: { high: 0, medium: 0, low: 0 }, findings: [], d1_scores: null }
+  assert.equal(checkAudit(ok), ok)
+  assert.throws(() => checkAudit({ ...ok, findings: undefined, status: 'red' }),
+    /missing status \(tingling or calm\), findings \(a list\)/)
+  assert.throws(() => checkAudit({ ...ok, dataset: { name: 'p' } }), /dataset\.rows, dataset\.target, dataset\.task/)
+  assert.throws(() => checkAudit({ ...ok, d1_scores: { metric: 'AUC' } }), /d1_scores\.features/)
+  assert.throws(() => checkAudit(null), /not a JSON object/)
 })

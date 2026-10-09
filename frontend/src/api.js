@@ -1,10 +1,11 @@
-import { errorMessage } from './lib.js'
+import { checkAudit, errorMessage } from './lib.js'
 import mockPrelim from './mock/audit_prelim.json'
 import mockCalm from './mock/audit_calm.json'
 import mockDemos from './mock/demo_datasets.json'
 
-// Until the backend is up (14:15 IST) the dashboard runs on the mock responses from FRONTEND_BRIEF.md.
-const USE_MOCK = true
+// The dashboard talks to the real backend. For frontend work without a backend, start it with
+// `VITE_USE_MOCK=1 npm run dev`: the mock responses from FRONTEND_BRIEF.md are used and the page says so.
+export const USE_MOCK = import.meta.env.VITE_USE_MOCK === '1'
 
 async function request(path, options) {
   let res
@@ -25,18 +26,18 @@ export function getDemoDatasets() {
   return request('/demo-datasets')
 }
 
-export function auditDemo(name) {
-  if (USE_MOCK) return mockDelay(name === 'clean' ? mockCalm : mockPrelim)
-  return request(`/audit/demo/${encodeURIComponent(name)}`, { method: 'POST' })
+export async function auditDemo(name) {
+  if (USE_MOCK) return mockDelay(name === 'breast_cancer' ? mockCalm : mockPrelim)
+  return checkAudit(await request(`/audit/demo/${encodeURIComponent(name)}`, { method: 'POST' }))
 }
 
 // columns: {target, split_col, group_col, time_col}; empty optional columns are left out of the form.
-export function auditUpload(file, columns) {
+export async function auditUpload(file, columns) {
   if (USE_MOCK) return mockDelay(mockPrelim)
   const form = new FormData()
   form.append('file', file)
   for (const [key, value] of Object.entries(columns)) {
     if (value) form.append(key, value)
   }
-  return request('/audit', { method: 'POST', body: form })
+  return checkAudit(await request('/audit', { method: 'POST', body: form }))
 }

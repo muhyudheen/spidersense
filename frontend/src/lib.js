@@ -28,6 +28,8 @@ export function errorMessage(status, body) {
   if (Array.isArray(detail) && detail.length) {
     return detail.map((d) => (d.loc ? `${d.loc.filter((x) => x !== 'body').join('.')}: ${d.msg}` : d.msg)).join('; ')
   }
+  // Through the Vite proxy a stopped backend shows up as a 5xx without a JSON body
+  if (status >= 500) return `Request failed (HTTP ${status}). Is the backend running on port 8000?`
   return status ? `Request failed (HTTP ${status})` : 'Could not reach the backend'
 }
 
@@ -68,4 +70,19 @@ export function d1Bars(d1) {
   return [...d1.features]
     .sort((a, b) => b.score - a.score)
     .map((f) => ({ ...f, width: Math.min(1, Math.max(0, f.score)) }))
+}
+
+// Checks that an audit response has the fields the dashboard reads, so a contract mismatch shows a
+// clear message instead of a blank page. Returns the response unchanged.
+export function checkAudit(body) {
+  const missing = []
+  if (!body || typeof body !== 'object') throw new Error('Unexpected response from the backend: not a JSON object')
+  if (!body.dataset || typeof body.dataset !== 'object') missing.push('dataset')
+  else for (const k of ['name', 'rows', 'target', 'task']) if (body.dataset[k] === undefined) missing.push(`dataset.${k}`)
+  if (!['tingling', 'calm'].includes(body.status)) missing.push('status (tingling or calm)')
+  if (!body.counts || typeof body.counts !== 'object') missing.push('counts')
+  if (!Array.isArray(body.findings)) missing.push('findings (a list)')
+  if (body.d1_scores != null && !Array.isArray(body.d1_scores.features)) missing.push('d1_scores.features (a list)')
+  if (missing.length) throw new Error(`Unexpected response from the backend: missing ${missing.join(', ')}`)
+  return body
 }

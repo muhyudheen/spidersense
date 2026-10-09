@@ -305,3 +305,21 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .chart .axis { stroke: var(--muted); stroke-width: 2; }
 .chart .threshold { stroke: var(--text); stroke-width: 3; stroke-dasharray: 10 7; }
 .chart .threshold-label { font-size: 18px; font-weight: 700; }
+
+.retry {
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.8rem;
+  border: 1px solid var(--red);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--red);
+  font-weight: 700;
+}
+.mock-banner {
+  margin: 0 0 1rem;
+  padding: 0.5rem 1rem;
+  border: 2px dashed var(--amber);
+  border-radius: var(--radius);
+  color: var(--amber);
+  font-weight: 700;
+}
