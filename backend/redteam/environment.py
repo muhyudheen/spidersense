@@ -58,7 +58,7 @@ class MockWorld:
 
     def search_docs(self, query=""):
         """Like a real search: only the docs that share a word with the query."""
-        words = {w for w in query.lower().split() if len(w) > 2}
+        words = {w for w in query.lower().split() if len(w) > 1}   # keep short words like "q3"
         hits = [d for d in self.state["docs"] if words & set(d.lower().replace(":", " ").split())]
         return "\n".join(hits) or "No results."
 
