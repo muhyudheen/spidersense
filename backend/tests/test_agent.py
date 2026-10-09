@@ -30,10 +30,10 @@ def test_agent_plans_and_calls_the_tools(monkeypatch):
     monkeypatch.setattr(agent, "ask_gemini", fake_gemini([{"call": "profile_dataset"}, {"call": "run_d1"}, "boat leaks."]))
     out = agent.run_agent(TITANIC, "survived")
     assert out["mode"] == "llm" and out["model"] == "fake-model"
-    assert kinds(out) == [("tool_call", "profile_dataset"), ("tool_result", "profile_dataset"),
-                          ("tool_call", "run_d1"), ("tool_result", "run_d1"), ("final", None)]
+    assert kinds(out)[:5] == [("tool_call", "profile_dataset"), ("tool_result", "profile_dataset"),
+                              ("tool_call", "run_d1"), ("tool_result", "run_d1"), ("final", None)]
     assert [f["location"]["column"] for f in out["findings"]] == ["boat"]
-    assert [s["n"] for s in out["steps"]] == list(range(1, 6))
+    assert [s["n"] for s in out["steps"]] == list(range(1, len(out["steps"]) + 1))
 
 
 def test_tool_not_on_the_allowlist_is_denied(monkeypatch):
@@ -56,8 +56,16 @@ def test_tool_budget_stops_a_looping_agent(monkeypatch):
 def test_agent_cannot_skip_the_audit(monkeypatch):
     monkeypatch.setattr(agent, "ask_gemini", fake_gemini(["Looks fine to me, no need to check."]))
     out = agent.run_agent(TITANIC, "survived")
-    assert ("tool_call", "run_d1") in kinds(out)
+    assert ("tool_call", "run_d1") in kinds(out) and ("tool_call", "run_d9") in kinds(out)
     assert [f["location"]["column"] for f in out["findings"]] == ["boat"]
+
+
+def test_agent_finds_both_kinds_of_leakage(monkeypatch):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    customers = pd.read_csv("demo/customers.csv")
+    out = agent.run_agent(customers, "churned")
+    assert {f["check"] for f in out["findings"]} == {"D9"}
+    assert all("example.com" not in str(s) or "***@" in str(s) for s in out["steps"])
 
 
 def test_offline_plan_when_gemini_is_unavailable(monkeypatch):
@@ -66,3 +74,4 @@ def test_offline_plan_when_gemini_is_unavailable(monkeypatch):
     assert out["mode"] == "offline" and out["model"] is None
     assert [f["location"]["column"] for f in out["findings"]] == ["boat"]
     assert out["steps"][-1]["type"] == "final" and "1 finding" in out["steps"][-1]["text"]
+    assert [s["tool"] for s in out["steps"] if s["type"] == "tool_call"] == ["profile_dataset", "run_d9", "run_d1"]
