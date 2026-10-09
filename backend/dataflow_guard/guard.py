@@ -17,7 +17,7 @@ SECRET_PATTERNS = {   # run on the raw value (not lowercased)
     "AWS key": re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
     "JWT": re.compile(r"\beyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+"),
     "private key": re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
-    "Aadhaar number": re.compile(r"(?<!\d)\d{4} ?\d{4} ?\d{4}(?!\d)"),
+    "Aadhaar number": re.compile(r"(?<![\d+])\d{4} ?\d{4} ?\d{4}(?!\d)"),   # digits after "+" are a phone number
     "PAN": re.compile(r"\b[A-Z]{5}[0-9]{4}[A-Z]\b"),
 }
 

@@ -8,6 +8,8 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from agent import run_agent
 from d1 import check_d1
 from d9 import check_d9
+from redteam.runner import run_suite
+from redteam.scenarios import ALL as REDTEAM_SCENARIOS
 
 DEMO_DIR = Path(__file__).parent / "demo"
 DEMOS = {
@@ -92,3 +94,17 @@ async def agent_upload(file: UploadFile = File(...), target: str = Form(...), go
 def agent_demo(name: str, goal: str = Form(DEFAULT_GOAL)):
     df, target = load_demo(name)
     return agent_response(df, name, target, goal)
+
+
+@app.get("/api/redteam/scenarios")
+def redteam_scenarios():
+    return [{"id": s.id, "kind": s.kind, "category": s.category, "title": s.title, "user_task": s.user_task,
+             "agent": s.agent} for s in REDTEAM_SCENARIOS]
+
+
+@app.post("/api/redteam/run")
+def redteam_run(mode: str = "strict"):
+    """Run every scenario under no_guard, allowlist_only and allowlist_plus_dataflow (mock tools only)."""
+    if mode not in ("strict", "assist"):
+        raise HTTPException(400, "mode must be 'strict' or 'assist'")
+    return run_suite(mode)
