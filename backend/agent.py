@@ -34,14 +34,14 @@ class GeminiUnavailable(Exception):
     pass
 
 
-def ask_gemini(contents):
+def ask_gemini(contents, system=SYSTEM, tools=TOOLS):
     """One model turn. Tries each model in MODELS; raises GeminiUnavailable if none answers."""
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         raise GeminiUnavailable("no GEMINI_API_KEY")
     client = genai.Client(api_key=key, http_options=types.HttpOptions(timeout=TIMEOUT_MS))
     config = types.GenerateContentConfig(
-        system_instruction=SYSTEM, tools=[types.Tool(function_declarations=TOOLS)],
+        system_instruction=system, tools=[types.Tool(function_declarations=tools)],
         automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True))
     for model in MODELS:
         try:
