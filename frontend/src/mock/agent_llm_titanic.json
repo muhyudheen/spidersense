@@ -1,0 +1,232 @@
+{
+ "run_id": "mock-llm-titanic",
+ "goal": "Audit this dataset for silent ML bugs.",
+ "mode": "llm",
+ "model": "gemini-3.5-flash-lite",
+ "steps": [
+  {
+   "n": 1,
+   "type": "thought",
+   "text": "I am checking the dataset profile to understand its structure."
+  },
+  {
+   "n": 2,
+   "type": "tool_call",
+   "tool": "profile_dataset",
+   "args": {},
+   "guard": {
+    "decision": "allowed",
+    "reason": "on the allowlist"
+   }
+  },
+  {
+   "n": 3,
+   "type": "tool_result",
+   "tool": "profile_dataset",
+   "result": {
+    "rows": 1309,
+    "target": "survived",
+    "task": "classification",
+    "columns": {
+     "pclass": {
+      "type": "int64",
+      "missing": 0
+     },
+     "survived": {
+      "type": "int64",
+      "missing": 0
+     },
+     "name": {
+      "type": "object",
+      "missing": 0
+     },
+     "sex": {
+      "type": "object",
+      "missing": 0
+     },
+     "age": {
+      "type": "float64",
+      "missing": 263
+     },
+     "sibsp": {
+      "type": "int64",
+      "missing": 0
+     },
+     "parch": {
+      "type": "int64",
+      "missing": 0
+     },
+     "ticket": {
+      "type": "object",
+      "missing": 0
+     },
+     "fare": {
+      "type": "float64",
+      "missing": 1
+     },
+     "cabin": {
+      "type": "object",
+      "missing": 1014
+     },
+     "embarked": {
+      "type": "object",
+      "missing": 2
+     },
+     "boat": {
+      "type": "object",
+      "missing": 823
+     },
+     "body": {
+      "type": "float64",
+      "missing": 1188
+     },
+     "home.dest": {
+      "type": "object",
+      "missing": 564
+     }
+    }
+   }
+  },
+  {
+   "n": 4,
+   "type": "thought",
+   "text": "I am running the target-leakage check."
+  },
+  {
+   "n": 5,
+   "type": "tool_call",
+   "tool": "run_d1",
+   "args": {},
+   "guard": {
+    "decision": "allowed",
+    "reason": "on the allowlist"
+   }
+  },
+  {
+   "n": 6,
+   "type": "tool_result",
+   "tool": "run_d1",
+   "result": {
+    "findings": [
+     {
+      "id": "D1-1",
+      "column": "boat",
+      "summary": "Scrambling boat wipes out 0.71 of the model's skill, and retraining without it loses 0.20 (of 0.97). An honest feature is never this decisive or this irreplaceable."
+     }
+    ]
+   }
+  },
+  {
+   "n": 7,
+   "type": "final",
+   "text": "**Target leakage found:** the boat column gives the answer away.\n* boat: scrambling it wipes out 0.71 of the model's skill\n* Fix: remove boat before training"
+  }
+ ],
+ "audit": {
+  "audit_id": "d5942bfd",
+  "dataset": {
+   "name": "titanic",
+   "rows": 1309,
+   "columns": 14,
+   "target": "survived",
+   "task": "classification"
+  },
+  "status": "tingling",
+  "counts": {
+   "high": 1,
+   "medium": 0,
+   "low": 0
+  },
+  "findings": [
+   {
+    "id": "D1-1",
+    "check": "D1",
+    "title": "Target leakage: boat gives the answer away",
+    "severity": "high",
+    "summary": "Scrambling boat wipes out 0.71 of the model's skill, and retraining without it loses 0.20 (of 0.97). An honest feature is never this decisive or this irreplaceable.",
+    "evidence": {
+     "metric": "AUC",
+     "skill_with_all_columns": 0.97,
+     "skill_lost_without_column": 0.2,
+     "skill_lost_when_scrambled": 0.71,
+     "threshold": 0.2
+    },
+    "location": {
+     "column": "boat"
+    },
+    "fix": "Check how boat is produced. If it is computed from survived, or only known after the outcome, remove it."
+   }
+  ],
+  "d1_scores": {
+   "metric": "skill lost when scrambled (AUC)",
+   "threshold": 0.2,
+   "features": [
+    {
+     "name": "boat",
+     "score": 0.71,
+     "flagged": true
+    },
+    {
+     "name": "sex",
+     "score": 0.01,
+     "flagged": false
+    },
+    {
+     "name": "embarked",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "parch",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "ticket",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "body",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "sibsp",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "cabin",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "pclass",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "home.dest",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "name",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "age",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "fare",
+     "score": -0.01,
+     "flagged": false
+    }
+   ]
+  }
+ }
+}

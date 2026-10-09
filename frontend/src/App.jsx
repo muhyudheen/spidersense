@@ -35,7 +35,8 @@ export default function App() {
       </nav>
 
       <main className="main">
-        <Page audit={audit} onAudit={onAudit} />
+        {/* onAudit shows the result on Findings; setAudit only updates it (the Agent page shows its own) */}
+        <Page audit={audit} onAudit={onAudit} setAudit={setAudit} />
       </main>
     </div>
   )

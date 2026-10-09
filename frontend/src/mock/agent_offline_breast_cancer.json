@@ -1,0 +1,360 @@
+{
+ "run_id": "mock-offline-breast-cancer",
+ "goal": "Audit this dataset for silent ML bugs.",
+ "mode": "offline",
+ "model": null,
+ "steps": [
+  {
+   "n": 1,
+   "type": "thought",
+   "text": "Offline plan: profile the dataset first."
+  },
+  {
+   "n": 2,
+   "type": "tool_call",
+   "tool": "profile_dataset",
+   "args": {},
+   "guard": {
+    "decision": "allowed",
+    "reason": "on the allowlist"
+   }
+  },
+  {
+   "n": 3,
+   "type": "tool_result",
+   "tool": "profile_dataset",
+   "result": {
+    "rows": 569,
+    "target": "target",
+    "task": "classification",
+    "columns": {
+     "mean radius": {
+      "type": "float64",
+      "missing": 0
+     },
+     "mean texture": {
+      "type": "float64",
+      "missing": 0
+     },
+     "mean perimeter": {
+      "type": "float64",
+      "missing": 0
+     },
+     "mean area": {
+      "type": "float64",
+      "missing": 0
+     },
+     "mean smoothness": {
+      "type": "float64",
+      "missing": 0
+     },
+     "mean compactness": {
+      "type": "float64",
+      "missing": 0
+     },
+     "mean concavity": {
+      "type": "float64",
+      "missing": 0
+     },
+     "mean concave points": {
+      "type": "float64",
+      "missing": 0
+     },
+     "mean symmetry": {
+      "type": "float64",
+      "missing": 0
+     },
+     "mean fractal dimension": {
+      "type": "float64",
+      "missing": 0
+     },
+     "radius error": {
+      "type": "float64",
+      "missing": 0
+     },
+     "texture error": {
+      "type": "float64",
+      "missing": 0
+     },
+     "perimeter error": {
+      "type": "float64",
+      "missing": 0
+     },
+     "area error": {
+      "type": "float64",
+      "missing": 0
+     },
+     "smoothness error": {
+      "type": "float64",
+      "missing": 0
+     },
+     "compactness error": {
+      "type": "float64",
+      "missing": 0
+     },
+     "concavity error": {
+      "type": "float64",
+      "missing": 0
+     },
+     "concave points error": {
+      "type": "float64",
+      "missing": 0
+     },
+     "symmetry error": {
+      "type": "float64",
+      "missing": 0
+     },
+     "fractal dimension error": {
+      "type": "float64",
+      "missing": 0
+     },
+     "worst radius": {
+      "type": "float64",
+      "missing": 0
+     },
+     "worst texture": {
+      "type": "float64",
+      "missing": 0
+     },
+     "worst perimeter": {
+      "type": "float64",
+      "missing": 0
+     },
+     "worst area": {
+      "type": "float64",
+      "missing": 0
+     },
+     "worst smoothness": {
+      "type": "float64",
+      "missing": 0
+     },
+     "worst compactness": {
+      "type": "float64",
+      "missing": 0
+     },
+     "worst concavity": {
+      "type": "float64",
+      "missing": 0
+     },
+     "worst concave points": {
+      "type": "float64",
+      "missing": 0
+     },
+     "worst symmetry": {
+      "type": "float64",
+      "missing": 0
+     },
+     "worst fractal dimension": {
+      "type": "float64",
+      "missing": 0
+     },
+     "target": {
+      "type": "int64",
+      "missing": 0
+     }
+    }
+   }
+  },
+  {
+   "n": 4,
+   "type": "thought",
+   "text": "Offline plan: run the target-leakage check."
+  },
+  {
+   "n": 5,
+   "type": "tool_call",
+   "tool": "run_d1",
+   "args": {},
+   "guard": {
+    "decision": "allowed",
+    "reason": "on the allowlist"
+   }
+  },
+  {
+   "n": 6,
+   "type": "tool_result",
+   "tool": "run_d1",
+   "result": {
+    "findings": []
+   }
+  },
+  {
+   "n": 7,
+   "type": "final",
+   "text": "No findings: no column gives the answer away."
+  }
+ ],
+ "audit": {
+  "audit_id": "9e2e389b",
+  "dataset": {
+   "name": "breast_cancer",
+   "rows": 569,
+   "columns": 31,
+   "target": "target",
+   "task": "classification"
+  },
+  "status": "calm",
+  "counts": {
+   "high": 0,
+   "medium": 0,
+   "low": 0
+  },
+  "findings": [],
+  "d1_scores": {
+   "metric": "skill lost when scrambled (AUC)",
+   "threshold": 0.2,
+   "features": [
+    {
+     "name": "worst texture",
+     "score": 0.02,
+     "flagged": false
+    },
+    {
+     "name": "worst concave points",
+     "score": 0.02,
+     "flagged": false
+    },
+    {
+     "name": "worst perimeter",
+     "score": 0.01,
+     "flagged": false
+    },
+    {
+     "name": "worst radius",
+     "score": 0.01,
+     "flagged": false
+    },
+    {
+     "name": "area error",
+     "score": 0.01,
+     "flagged": false
+    },
+    {
+     "name": "mean texture",
+     "score": 0.01,
+     "flagged": false
+    },
+    {
+     "name": "radius error",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "compactness error",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "worst area",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "worst concavity",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "concavity error",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "symmetry error",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "fractal dimension error",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "mean compactness",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "worst symmetry",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "mean fractal dimension",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "mean area",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "mean concave points",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "mean symmetry",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "mean perimeter",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "mean radius",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "worst smoothness",
+     "score": 0.0,
+     "flagged": false
+    },
+    {
+     "name": "smoothness error",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "worst compactness",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "worst fractal dimension",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "texture error",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "mean smoothness",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "concave points error",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "perimeter error",
+     "score": -0.0,
+     "flagged": false
+    },
+    {
+     "name": "mean concavity",
+     "score": -0.0,
+     "flagged": false
+    }
+   ]
+  }
+ }
+}

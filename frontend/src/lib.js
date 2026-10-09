@@ -108,3 +108,80 @@ export function visibleBars(bars, max) {
   const hidden = bars.filter((b, i) => !(i < max || b.flagged))
   return { shown, hidden, hiddenMax: hidden.length ? Math.max(...hidden.map((b) => b.score)) : null }
 }
+
+// ---- Agent page (CP2) ----
+
+export const DEFAULT_GOAL = 'Audit this dataset for silent ML bugs.'
+
+// Checks an agent run response has what the Agent page reads (and that its audit is a valid audit).
+export function checkAgentRun(body) {
+  if (!body || typeof body !== 'object') throw new Error('Unexpected agent response from the backend: not a JSON object')
+  const missing = []
+  if (!body.run_id) missing.push('run_id')
+  if (!['llm', 'offline'].includes(body.mode)) missing.push('mode (llm or offline)')
+  if (!Array.isArray(body.steps)) missing.push('steps (a list)')
+  if (!body.audit) missing.push('audit')
+  if (missing.length) throw new Error(`Unexpected agent response from the backend: missing ${missing.join(', ')}`)
+  checkAudit(body.audit)
+  return body
+}
+
+// The run's mode badge: which planner ran the audit.
+export function modeBadge(run) {
+  if (run.mode === 'llm') return { tone: 'llm', text: run.model ? `LLM · ${run.model}` : 'LLM' }
+  return { tone: 'offline', text: 'OFFLINE PLAN' }
+}
+
+// The guard badge on a tool call. Anything other than "allowed" is shown as denied.
+export function guardBadge(guard) {
+  const allowed = guard && guard.decision === 'allowed'
+  return { tone: allowed ? 'allowed' : 'denied', text: allowed ? 'ALLOWED' : 'DENIED', reason: (guard && guard.reason) || '' }
+}
+
+// A tool call's args on one line; {} reads as "no arguments".
+export function formatArgs(args) {
+  if (!args || Object.keys(args).length === 0) return 'no arguments'
+  return JSON.stringify(args)
+}
+
+const plural = (n, word) => `${n.toLocaleString('en-IN')} ${word}${n === 1 ? '' : 's'}`
+
+// One-line summary of a tool result; the full JSON is shown on click.
+export function resultSummary(result) {
+  if (!result || typeof result !== 'object') return String(result)
+  if (result.error) return `Error: ${result.error}`
+  if (Array.isArray(result.findings)) {
+    if (result.findings.length === 0) return 'No findings'
+    const where = result.findings.map((f) => f.column ?? f.location?.column ?? f.id).filter(Boolean)
+    return `${plural(result.findings.length, 'finding')}${where.length ? `: ${where.join(', ')}` : ''}`
+  }
+  if (typeof result.rows === 'number') {
+    const parts = [plural(result.rows, 'row')]
+    if (result.columns && typeof result.columns === 'object') parts.push(plural(Object.keys(result.columns).length, 'column'))
+    return parts.join(', ')
+  }
+  const keys = Object.keys(result)
+  return keys.length ? `Result: ${keys.join(', ')}` : 'Empty result'
+}
+
+// The final summary is LLM output, so it is never rendered as HTML. This turns simple Markdown
+// (**bold**, "* " or "- " bullets) into plain data that React renders as text:
+// [{type: 'p', parts}] or [{type: 'ul', items: [parts, …]}], where parts = [{text, bold}].
+export function parseSimpleMarkdown(text) {
+  const inline = (line) => line.split(/(\*\*[^*]+\*\*)/g).filter((s) => s !== '')
+    .map((s) => (s.startsWith('**') && s.endsWith('**') && s.length > 4 ? { text: s.slice(2, -2), bold: true } : { text: s, bold: false }))
+  const blocks = []
+  for (const raw of String(text ?? '').split(/\r?\n/)) {
+    const line = raw.trim()
+    if (!line) continue
+    const bullet = line.match(/^[*-]\s+(.*)$/)
+    if (bullet) {
+      const last = blocks[blocks.length - 1]
+      if (last && last.type === 'ul') last.items.push(inline(bullet[1]))
+      else blocks.push({ type: 'ul', items: [inline(bullet[1])] })
+    } else {
+      blocks.push({ type: 'p', parts: inline(line) })
+    }
+  }
+  return blocks
+}

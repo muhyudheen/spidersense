@@ -219,3 +219,76 @@ The dashboard in `frontend/` is built by a Claude Code cloud session, managed by
 **What the backend needs**
 - To run on `127.0.0.1:8000` with the endpoints and demo names above. Errors as `{"detail": "..."}` so the dashboard shows the real reason.
 - No other changes: the dashboard already handles the real evidence keys, the metric label and threshold 0.2.
+
+---
+
+## CP2 · Agent page · 15:58 IST, 9 Oct
+**Commit message:** `feat(dashboard): add agent page with live tool-call trace`
+**Branch:** `feat/dashboard-agent` (from `main` at `b761bfe`), with a pull request into `main` for Abel to review and merge.
+
+**What I built** (to the brief's "CP2: Agent page" section)
+- **Agent page** (`src/pages/AgentPage.jsx`), in the sidebar between Audit and Findings.
+  - A **goal** box prefilled with "Audit this dataset for silent ML bugs." An empty goal isn't sent, so the backend uses its default.
+  - **Demo buttons** from `GET /api/demo-datasets` ("Run agent on …") → `POST /api/agent/demo/{name}` with form field `goal`.
+  - **Upload + target** → `POST /api/agent` (multipart `file`, `target`, `goal`).
+- **While running:** "SpiderSense agent is thinking…" with a spinner, a live seconds counter, and "An LLM run takes about 5–40 s; the offline plan about 3 s."
+  - All buttons are disabled during a run.
+  - After 2 minutes the page stops waiting and says so, instead of spinning forever.
+- **The trace:** a vertical numbered timeline. Rows appear one after another, 300 ms apart, once the response arrives (all at once if the viewer prefers reduced motion), and the newest row scrolls into view.
+  - `thought`: 💭 and italic text.
+  - `tool_call`: 🔧, the tool name in monospace, the args (`{}` reads "no arguments"), and a **guard badge**: green ALLOWED or red DENIED, with the reason as a tooltip. On a denied call the reason is also printed next to it, because a projector audience can't hover.
+  - `tool_result`: collapsible. A one-line summary ("1,309 rows, 14 columns", "1 finding: boat", "No findings", "Error: denied by the SpiderSense Guard"); the full JSON opens on click. Error results are red.
+  - `final`: a highlighted box. **The text is never rendered as HTML.** `**bold**` and `*`/`-` bullets are parsed into plain data and rendered as React text, so `<img onerror=…>` in LLM output stays visible text.
+  - An unknown step type is shown as raw JSON rather than hidden.
+- **Trace header:**
+  - the mode badge: `LLM · gemini-3.5-flash-lite` in blue, or `OFFLINE PLAN` in amber;
+  - the run id, the step and tool-call counts, "N denied by the guard" in red when any were denied, and the measured run time;
+  - the goal the backend used.
+- **Below the trace,** once it has played: "Audit result" with the status pill, then the **same** summary line, D1 chart and finding cards as the Findings page. I moved them into an `AuditView` component in `FindingsPage.jsx` that both pages use. The header pill and the Findings page also update to this run's audit.
+- **Errors:**
+  - the API's `detail` is shown as before;
+  - a stopped backend gives the "Backend not reachable: start it with …" message;
+  - a backend **without** the agent endpoint (FastAPI's plain 404) gives "The backend has no agent endpoint (POST /api/agent…). Update backend/ to the latest main and restart it."
+  - A response missing `run_id`, `mode`, `steps` or `audit` (or with an invalid audit) is reported by name instead of rendering a blank page.
+
+**Files changed**
+- New: `frontend/src/pages/AgentPage.jsx`, `frontend/tests/agent.test.js`, `frontend/src/mock/agent_llm_titanic.json`, `frontend/src/mock/agent_offline_breast_cancer.json`, `frontend/src/mock/agent_denied_prelim.json`
+- Changed: `frontend/src/api.js` (`runAgentDemo`, `runAgentUpload`; errors now carry the HTTP status), `frontend/src/lib.js` (`DEFAULT_GOAL`, `checkAgentRun`, `modeBadge`, `guardBadge`, `formatArgs`, `resultSummary`, `parseSimpleMarkdown`), `frontend/src/pages/FindingsPage.jsx` (`AuditView` extracted, no visible change), `frontend/src/pages/index.js` (sidebar), `frontend/src/App.jsx` (passes `setAudit`), `frontend/src/styles.css`, `frontend/CLOUD_REPORT.md`
+
+**How I checked it**
+- **`npm test`: 27/27 pass** (19 before, plus 8 in `tests/agent.test.js`). They run the real `api.js` with `fetch` mocked to answer like the backend:
+  - **llm run** (titanic): `POST /api/agent/demo/titanic` with the goal. Badge "LLM · gemini-3.5-flash-lite"; steps 1–7 in order; both calls ALLOWED; results "1,309 rows, 14 columns" and "1 finding: boat"; audit tingling on boat.
+  - **offline run** (breast_cancer): `model` null → "OFFLINE PLAN"; "No findings"; audit calm, no flagged bars.
+  - **run with a DENIED step** (prelim): `read_file {"path":"backend/.env"}` → DENIED with the reason "read_file is not on the allowlist"; its result reads "Error: denied by the SpiderSense Guard"; the next call is ALLOWED and the audit still finds NLP_Severity_Score.
+  - an empty goal isn't sent; the upload sends `file`, `target`, `goal`;
+  - the error messages (API detail, no agent endpoint, stopped backend);
+  - `checkAgentRun` names missing fields;
+  - Markdown bold and bullets parse, and HTML stays text.
+- **`npm run build`:** succeeds.
+- **The mocks' `audit` objects are real.** I ran the backend from `main` in this cloud session (`uv sync --frozen`, `uvicorn main:app`; no changes to `backend/`) and captured its `/api/audit/demo/*` responses, about 1.2 s each:
+  - titanic → boat 0.71, tingling;
+  - breast_cancer → calm;
+  - prelim → NLP_Severity_Score 0.37, tingling.
+  - The agent **steps** in the mocks are written to the brief's contract, not captured: `main` has no agent endpoint yet.
+- **Headless Chromium** (1366×768), with the real backend for everything except `/api/agent…`, which a throwaway stub (not committed) answered with the three mock runs after 2.5 s. No page errors:
+  - the sidebar reads Audit · Agent · Findings, and the Audit page still works against the real backend;
+  - for each run: the loading counter ticks, the trace plays row by row to 7 steps, and the badges, results and final box are as in the tests;
+  - the denied run shows "1 denied by the guard" in the header;
+  - the audit section shows the pill, summary, chart and cards, and the Findings page shows the same audit.
+
+**Open problems**
+- **Not checked against a real agent run.** `main` has no `/api/agent` endpoint yet. **The live check is on the laptop**: titanic should show the trace and find `boat`; breast_cancer should come back calm.
+- On a 1366×768 screen the trace starts below the goal, demo buttons and upload, so it scrolls into view as it plays. If judges should see it without scrolling, the input area could collapse after a run (that would be a `fix(dashboard): …` commit).
+- The run time shown is measured in the browser (request to response); the brief has no server-side duration field.
+
+**What the backend needs**
+- `POST /api/agent/demo/{name}` (form field `goal`, optional) and `POST /api/agent` (multipart `file`, `target`, `goal`), with the response exactly as in the brief:
+  - `run_id`;
+  - `mode` = `llm` | `offline`, and `model` null when offline;
+  - `steps` with `n` from 1;
+  - `guard` = {`decision`, `reason`} on every `tool_call`;
+  - `{"error": "denied by the SpiderSense Guard"}` as a denied call's result;
+  - `audit` = the same object as `/api/audit`.
+- `run_d1`'s result: `findings` with `column` per finding, as in the brief. The one-line summary also accepts `location.column` or `id`.
+- `profile_dataset`'s result: `rows` (a number) and `columns` (an object), for "N rows, M columns".
+- Errors as `{"detail": "..."}`. The 2-minute browser timeout is well above the brief's 40 s worst case.
