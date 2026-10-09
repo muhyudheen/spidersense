@@ -190,3 +190,24 @@ Response:
 - `npm test` and `npm run build` pass (mock the agent response in tests: one `llm` run, one `offline` run, and one with a DENIED step).
 - On the laptop with the real backend: the titanic agent run shows the trace and finds `boat`; breast_cancer comes back calm.
 - PR from `feat/dashboard-agent` into `main`, reviewed and merged by Abel.
+
+---
+
+# CP2 polish: a safety-first look (branch `feat/dashboard-safety-ui`, commit `feat(dashboard): reframe the dashboard around ai safety`)
+
+**Why:** the judges score Track 2, *Safe & Trustworthy AI*. Today the dashboard looks like a data-quality tool. The same features need to *look* like safety. No backend change is needed: everything comes from the existing API.
+
+## What changes
+1. **Home / Audit page header:** "SpiderSense: an AI safety guard for machine learning", with a one-line subtitle: "Catches models that cheat, data that leaks, and agents that misbehave."
+2. **Three safety panels** at the top of the Findings page and under the agent trace, filled from `audit.findings` by `check`:
+   - 🧪 **Model trust:** D1 findings (target leakage). Shows the count, or "No leak found" in green.
+   - 🔒 **Data privacy:** D9 findings (secrets and personal data). Shows the count and the kinds found (e.g. "600 emails · 43 credentials · 20 card numbers").
+   - 🛡️ **Agent firewall:** from an agent run's steps: tool calls allowed vs denied (e.g. "3 allowed · 0 denied"). On the plain Audit page: "Run the agent to see the firewall".
+3. **D9 findings display:** `evidence.found` (an object of kind → count) as small chips; `evidence.masked_samples` (a list of strings) as monospace chips with a 🔒 icon; `evidence.share_of_rows` as a percentage. Never show anything except what the API returns (it's already masked).
+4. **Demo buttons:** the new `customers` demo appears automatically from `/api/demo-datasets`. Give each demo a small tag: prelim and titanic → "answer leakage", customers → "privacy leak", breast_cancer → "clean". Use a lookup with a neutral fallback for unknown names.
+5. **Layout:** after a run, collapse the input area (goal, demo buttons, upload) into a one-line summary with an "Edit" button, so the trace and findings fit on a 1366×768 projector without scrolling.
+6. **Visual polish:** a consistent dark theme with one accent colour (spider red `#e23b3b` for TINGLING, green for CALM, amber for OFFLINE), larger headings, more spacing, and no clutter. Readable from the back of a room.
+
+## Done when
+- `npm test` and `npm run build` pass. New tests cover the panel counts (D1 only, D9 only, both, none), the D9 evidence chips, and the demo tags.
+- Report in CLOUD_REPORT.md, then a PR from `feat/dashboard-safety-ui` into `main` for Abel to review and merge, **by 18:45**.
