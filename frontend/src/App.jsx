@@ -3,6 +3,7 @@ import { PAGE_COMPONENTS } from './pages/index.js'
 import { DEFAULT_ROUTE, NAV, ROUTES } from './routes.js'
 import { hrefFor, navigate, useHashRoute } from './router.js'
 import { useHealth } from './useHealth.js'
+import { useRedteam } from './useRedteam.js'
 import ModeToggle from './ModeToggle.jsx'
 
 const ROUTE_IDS = ROUTES.map((r) => r.id)
@@ -15,6 +16,7 @@ export default function App() {
   // The Data-Flow Guard's mode, shared by the Red-Team and Guard pages
   const [mode, setMode] = useState('strict')
   const [menuOpen, setMenuOpen] = useState(false)
+  const redteam = useRedteam()
   const Page = PAGE_COMPONENTS[route.id]
 
   function onAudit(result) {
@@ -25,7 +27,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="navbar">
-        <a className="brand" href={hrefFor(NAV[0].id)}><span aria-hidden="true">🕷️</span> SpiderSense</a>
+        <a className="brand" href="#/"><span aria-hidden="true">🕷️</span> SpiderSense</a>
         <button className="menu-button" aria-expanded={menuOpen} aria-controls="nav-links"
                 onClick={() => setMenuOpen(!menuOpen)}>
           Menu
@@ -50,7 +52,7 @@ export default function App() {
 
       <main className="main">
         {/* onAudit shows the result on Findings; setAudit only updates it (the Agent page shows its own) */}
-        <Page audit={audit} onAudit={onAudit} setAudit={setAudit} mode={mode} setMode={setMode} health={health} />
+        <Page audit={audit} onAudit={onAudit} setAudit={setAudit} mode={mode} setMode={setMode} health={health} redteam={redteam} />
       </main>
     </div>
   )

@@ -456,3 +456,48 @@ The dashboard in `frontend/` is built by a Claude Code cloud session, managed by
 
 **What the backend needs**
 - Nothing new.
+
+---
+
+## After CP3 · 1/2 · 21:33 IST, 9 Oct
+**Commit message:** `feat(dashboard): add the overview page`
+**Branch:** `feat/dashboard-overview` (from `main` at `ef930a9`, after PR #15 was merged with a merge commit). Abel's decisions on PR #15: keep **HELD** for held attacks; skip the safety UI for now.
+
+**What I built**
+- **Overview page** (`#/`, also `#/overview`): now the landing page and the first navbar link. The 🕷️ brand links to it.
+  - **Hero:** "Your AI agent can be tricked. **SpiderSense stops the data from leaving.**", with a two-line explanation (static text) and a **▶ Run the simulator** button. The button runs `POST /api/redteam/run?mode=<current mode>`.
+  - **Four KPI tiles that count up**, all from the run's `metrics`:
+    - **Allowlist only:** x / 9 attacks got through;
+    - **With Data-Flow Guard:** y / 9 (in assist mode, also "up to N / 9 if a human approves every held call");
+    - **Normal work completed:** z / 12, with the guard on;
+    - **the guard's median time per call** (p50 ms, with p95 and the number of calls).
+  - Each tile's colour follows its own number: red as soon as one attack got through, green when none did, cyan for time.
+  - **Before any run** for the current mode the tiles show "—" with "Run the simulator".
+  - A **"How it works" strip**: Read → Label → Check → Block (static text).
+  - **Feature cards** for the Red-Team Simulator and ML Audit. The Data-Flow Guard card arrives with its page in the next commit, so no link points at a missing page.
+- **One shared run** (`src/useRedteam.js`): the last run per mode lives in `App`, so the Overview's run also fills the Red-Team page without a second request. The Red-Team page now runs the suite only when the current mode has no run yet; its Run button still re-runs.
+- **Count-up** (`src/useCountUp.js`): about 0.9 s, eased, using `requestAnimationFrame`. **With reduced motion it shows the final number at once.**
+
+**Files changed**
+- New: `frontend/src/pages/OverviewPage.jsx`, `frontend/src/useRedteam.js`, `frontend/src/useCountUp.js`, `frontend/tests/overview.test.js`
+- Changed: `frontend/src/redteam.js` (`overviewKpis`, `countUpValue`), `frontend/src/pages/RedTeamPage.jsx` (uses the shared run), `frontend/src/App.jsx` (shared run; brand links to `#/`), `frontend/src/routes.js`, `frontend/src/pages/index.js`, `frontend/src/styles.css`, `frontend/CLOUD_REPORT.md`
+
+**How I checked it**
+- `npm test`: **51/51**. The 4 new tests:
+  - KPIs from the strict mock: 9/9 red, 0/9 green, 11/12, p50 and "51 calls";
+  - assist adds "up to 4";
+  - one attack getting through turns the guard tile red;
+  - `countUpValue` easing, end value and decimals.
+- `npm run build` passes.
+- **Headless Chromium at 1366×768,** against the real backend (`feat/dataflow-guard-decoding`, run unchanged from a temporary worktree), with no page errors:
+  - Before a run: four "—" tiles. After Run: mid-count `4 / 9, 0 / 9, 5 / 12, 0.036`, ending at `9 / 9, 0 / 9, 11 / 12` and the live p50.
+  - Switching to ASSIST shows "—" until its run, then "up to 4 / 9 if a human approves every held call".
+  - Opening the Red-Team page after a run made **0 extra run requests** (the shared run).
+  - **Reduced motion:** the final values appear at once.
+  - The hero, Run button, four tiles and the start of "How it works" fit on one 1366×768 screen.
+
+**Open problems**
+- None new. The red-team endpoints are still only on the backend's guard branches; without them the pages fall back to the saved real run, marked "demo data".
+
+**What the backend needs**
+- Nothing new.

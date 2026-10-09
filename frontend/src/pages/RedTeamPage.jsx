@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { getRedteamScenarios, runRedteam } from '../api.js'
+import { getRedteamScenarios } from '../api.js'
 import IncidentCard from '../IncidentCard.jsx'
 import ModeToggle from '../ModeToggle.jsx'
 import ReplayArena from '../ReplayArena.jsx'
@@ -10,33 +10,18 @@ import {
 import { useHashParam } from '../router.js'
 import ScoreChart from '../ScoreChart.jsx'
 
-export default function RedTeamPage({ mode, setMode }) {
-  const [run, setRun] = useState(null)
-  const [demo, setDemo] = useState(false)
+export default function RedTeamPage({ mode, setMode, redteam }) {
+  const { runs, busy, error, start } = redteam
+  const run = runs[mode] ? runs[mode].run : null
+  const demo = runs[mode] ? runs[mode].demo : false
   const [scenarios, setScenarios] = useState([])
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState('')
   const [filter, setFilter] = useState('all')
   const [speed, setSpeed] = useState(1)
   const selectedParam = useHashParam()
   const arenaRef = useRef(null)
 
-  async function start(m) {
-    setBusy(true)
-    setError('')
-    try {
-      const out = await runRedteam(m)
-      setRun(out.run)
-      setDemo(out.demo)
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  // The suite takes about a second, so it runs on arrival and again when the mode changes
-  useEffect(() => { start(mode) }, [mode])
+  // The suite takes about a second, so it runs on arrival (and on a mode change) when this mode has no run yet
+  useEffect(() => { if (!runs[mode]) start(mode) }, [mode])
   useEffect(() => { getRedteamScenarios().then((s) => setScenarios(s.scenarios), () => {}) }, [])
   // Picking a scenario in the matrix brings its replay into view
   useEffect(() => {

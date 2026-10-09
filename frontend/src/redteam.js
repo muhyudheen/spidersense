@@ -258,3 +258,31 @@ export function replayPlan(row) {
   })
   return { lanes, length: Math.max(0, ...lanes.map((l) => l.calls.length)) }
 }
+
+// ---- Overview KPIs ----
+
+// The Overview's tiles, from one run's metrics. A tile is red when attacks got through, green when none did.
+export function overviewKpis(run) {
+  const allow = run.metrics.allowlist_only
+  const guard = run.metrics[GUARD_CONFIG]
+  const guardWorst = Math.round(guard.asr_worst * guard.attacks)
+  return [
+    { id: 'allowlist', label: 'Allowlist only', value: allow.attacks_succeeded, of: allow.attacks,
+      unit: 'attacks got through', tone: allow.attacks_succeeded > 0 ? 'red' : 'green' },
+    { id: 'guard', label: 'With Data-Flow Guard', value: guard.attacks_succeeded, of: guard.attacks,
+      // assist: a held attack gets through only if a human approves it
+      upTo: guardWorst > guard.attacks_succeeded ? guardWorst : null,
+      unit: 'attacks got through', tone: guard.attacks_succeeded > 0 ? 'red' : 'green' },
+    { id: 'benign', label: 'Normal work completed', value: guard.benign_completed, of: guard.benign,
+      unit: 'tasks, with the guard on', tone: guard.benign_completed === guard.benign ? 'green' : 'green-partial' },
+    { id: 'overhead', label: "Guard's median time per call", value: guard.overhead_ms.p50, decimals: 3,
+      unit: `ms (p95 ${guard.overhead_ms.p95} ms, ${guard.overhead_ms.calls} calls)`, tone: 'cyan' },
+  ]
+}
+
+// Count-up value at time t (0…1), eased; integers stay integers.
+export function countUpValue(target, t, decimals = 0) {
+  const eased = 1 - (1 - Math.min(1, Math.max(0, t))) ** 3
+  const v = target * eased
+  return decimals ? Number(v.toFixed(decimals)) : Math.round(v)
+}
