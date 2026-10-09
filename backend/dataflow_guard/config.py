@@ -20,7 +20,7 @@ class ToolSpec:
     output_integrity: Integrity
     output_confidentiality: Confidentiality
     external: bool = False
-    sinks: dict = field(default_factory=dict)     # argument name -> list of SinkType
+    sinks: dict[str, list[SinkType]] = field(default_factory=dict)   # argument name -> sink types
     known: bool = True                            # False for tools missing from the registry (fail-safe defaults)
 
 
@@ -30,9 +30,9 @@ class GuardConfig:
     mode: str                                     # "strict" (BLOCK) or "assist" (ESCALATE to a human)
     command_containment: float
     private_overlap_min: int
-    egress_domains: set
-    egress_emails: set
-    tools: dict                                   # name -> ToolSpec
+    egress_domains: set[str]
+    egress_emails: set[str]
+    tools: dict[str, ToolSpec]                    # name -> ToolSpec
     unknown_output: tuple                         # (Integrity, Confidentiality)
     unknown_sinks: list                           # SinkTypes applied to every string argument of an unknown tool
 

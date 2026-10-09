@@ -24,6 +24,9 @@ class SinkType(str, Enum):
     OUTBOUND_CONTENT = "outbound_content"  # bodies, messages, attachments, fetched URLs
 
 
+_ORDER = ("allow", "warn", "escalate", "block")   # least to most severe
+
+
 class Action(str, Enum):
     ALLOW = "allow"
     WARN = "warn"
@@ -32,7 +35,7 @@ class Action(str, Enum):
 
     @property
     def rank(self):
-        return ["allow", "warn", "escalate", "block"].index(self.value)
+        return _ORDER.index(self.value)
 
 
 def most_severe(actions):
@@ -51,8 +54,8 @@ class LedgerEntry:
     confidentiality: Confidentiality
     text: str
     norm: str                      # normalized text
-    shingles: set = field(default_factory=set)    # word 3-grams of norm
-    entities: dict = field(default_factory=dict)  # kind -> set of values (email, domain, upi, phone, ...)
+    shingles: set[str] = field(default_factory=set)              # word 3-grams of norm
+    entities: dict[str, set[str]] = field(default_factory=dict)  # kind -> values (email, domain, upi, phone, ...)
 
     def to_dict(self):
         """JSON-ready: enums as text, sets as sorted lists. Shingles are only a count (large, used for matching)."""
@@ -89,7 +92,7 @@ class Finding:
     tool: str
     arg: str
     value_excerpt: str             # truncated; real secrets masked (canaries are fake, so they can be shown)
-    evidence: list = field(default_factory=list)   # list of Match
+    evidence: list[Match] = field(default_factory=list)
     reason: str = ""               # one plain-English sentence for the incident card
 
     def to_dict(self):
@@ -101,7 +104,7 @@ class Finding:
 @dataclass
 class Decision:
     action: Action                 # the most severe action across the findings
-    findings: list = field(default_factory=list)
+    findings: list[Finding] = field(default_factory=list)
 
     def to_dict(self):
         return {"action": self.action.value, "findings": [f.to_dict() for f in self.findings]}
