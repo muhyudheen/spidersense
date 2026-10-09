@@ -1,0 +1,34 @@
+import { useState } from 'react'
+import { PAGES } from './pages/index.js'
+
+export default function App() {
+  const [pageId, setPageId] = useState(PAGES[0].id)
+  const Page = PAGES.find((p) => p.id === pageId).component
+
+  return (
+    <div className="app">
+      <header className="header">
+        <div className="brand">
+          <span aria-hidden="true">🕷️</span> SpiderSense
+        </div>
+      </header>
+
+      <nav className="sidebar" aria-label="Pages">
+        {PAGES.map((p) => (
+          <button
+            key={p.id}
+            className={p.id === pageId ? 'nav-item active' : 'nav-item'}
+            aria-current={p.id === pageId ? 'page' : undefined}
+            onClick={() => setPageId(p.id)}
+          >
+            {p.label}
+          </button>
+        ))}
+      </nav>
+
+      <main className="main">
+        <Page />
+      </main>
+    </div>
+  )
+}
