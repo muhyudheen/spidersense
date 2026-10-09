@@ -1,5 +1,5 @@
 """The provenance ledger: every piece of content that entered the agent's context during one run, with its labels."""
-from .extract import extract_entities, normalize, shingles
+from .extract import decoded_variants, extract_entities, normalize, shingles
 from .labels import Confidentiality, Integrity, LedgerEntry
 
 
@@ -13,11 +13,17 @@ class ProvenanceLedger:
     def add(self, text, source_kind, origin, integrity, confidentiality, step=0):
         """Record content as it enters the context. Never record the model's own messages: they are what gets checked."""
         norm = normalize(text)
+        entities = extract_entities(norm, normalized=True)
+        # also index what is hidden one or two encoding layers deep (base64, hex), so an address the agent decodes
+        # is still traced to this source. Decoding runs on the raw text: lowercasing would break base64.
+        for variant in decoded_variants(str(text))[1:]:
+            for kind, values in extract_entities(variant).items():
+                entities.setdefault(kind, set()).update(values)
         entry = LedgerEntry(id=f"L-{len(self.entries) + 1:04d}", run_id=self.run_id, step=step,
                             source_kind=source_kind, origin=origin, integrity=Integrity(integrity),
                             confidentiality=Confidentiality(confidentiality), text=str(text), norm=norm,
                             shingles=shingles(norm, normalized=True),
-                            entities=extract_entities(norm, normalized=True))
+                            entities=entities)
         self.entries.append(entry)
         for values in entry.entities.values():
             for v in values:
