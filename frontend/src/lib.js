@@ -40,3 +40,32 @@ export function statusPill(audit) {
   }
   return { tone: 'calm', text: 'CALM · no findings' }
 }
+
+export const SEVERITY_ORDER = ['high', 'medium', 'low']
+
+// Findings sorted high → medium → low; the API's order is kept within a severity.
+export function sortFindings(findings) {
+  const rank = (f) => {
+    const i = SEVERITY_ORDER.indexOf(f.severity)
+    return i === -1 ? SEVERITY_ORDER.length : i
+  }
+  return [...findings].sort((a, b) => rank(a) - rank(b))
+}
+
+// "R2" → "R²" for display; other metric names unchanged.
+export function metricLabel(metric) {
+  return metric === 'R2' ? 'R²' : metric
+}
+
+// Evidence values for the key/value table: numbers and strings as they are, anything else as JSON.
+export function evidenceValue(value) {
+  if (typeof value === 'number' || typeof value === 'string') return String(value)
+  return JSON.stringify(value)
+}
+
+// D1 chart rows, highest score first. Scores are clamped to the 0–1 axis for drawing only.
+export function d1Bars(d1) {
+  return [...d1.features]
+    .sort((a, b) => b.score - a.score)
+    .map((f) => ({ ...f, width: Math.min(1, Math.max(0, f.score)) }))
+}

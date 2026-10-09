@@ -202,3 +202,106 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   background: rgba(255, 92, 92, 0.1);
   color: var(--red);
 }
+
+/* Findings page */
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.1rem;
+  padding: 0.8rem 1.1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.summary strong { font-size: 1.15rem; }
+.count { font-weight: 700; }
+.count-high { color: var(--red); }
+.count-medium { color: var(--amber); }
+.count-low { color: var(--accent); }
+
+.no-findings {
+  padding: 0.8rem 1.1rem;
+  border: 1px solid var(--green);
+  border-radius: var(--radius);
+  color: var(--green);
+  background: rgba(63, 209, 122, 0.08);
+}
+
+.findings { list-style: none; margin: 1rem 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.finding {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 6px solid var(--grey);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+}
+.finding-high { border-left-color: var(--red); }
+.finding-medium { border-left-color: var(--amber); }
+.finding-low { border-left-color: var(--accent); }
+
+.finding-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+.finding-title { flex: 1; font-size: 1.15rem; font-weight: 700; }
+.chevron { color: var(--muted); font-size: 1.2rem; }
+.check-id { color: var(--muted); }
+.finding-summary { margin: 0.5rem 0 0; }
+.finding-location { margin: 0.35rem 0 0; color: var(--muted); display: flex; gap: 1rem; flex-wrap: wrap; }
+
+.badge {
+  padding: 0.15rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--grey);
+  color: #0d1117;
+}
+.badge-high { background: var(--red); }
+.badge-medium { background: var(--amber); }
+.badge-low { background: var(--accent); }
+
+.finding-detail { margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+.finding-detail h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0.5rem 0; }
+.evidence { border-collapse: collapse; min-width: 50%; }
+.evidence th, .evidence td { padding: 0.35rem 0.9rem; border-bottom: 1px solid var(--border); text-align: left; }
+.evidence th { font-weight: 600; color: var(--muted); white-space: nowrap; }
+.fix { margin: 0; }
+
+/* D1 chart */
+.chart {
+  margin: 1.5rem 0 0;
+  padding: 1rem 1.25rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 1040px;
+}
+.chart h2 { margin: 0 0 0.4rem; }
+.chart svg { display: block; width: 100%; height: auto; margin-top: 0.5rem; }
+.legend { display: flex; gap: 1.5rem; flex-wrap: wrap; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.swatch { display: inline-block; width: 1.1rem; height: 0.8rem; border-radius: 2px; }
+.swatch-flagged { background: var(--red); }
+.swatch-ok { background: var(--grey); }
+.swatch-threshold { height: 0; border-top: 3px dashed var(--text); }
+
+.chart text { font-family: inherit; font-size: 20px; fill: var(--text); }
+.chart .name.flagged, .chart .score.flagged { fill: var(--red); font-weight: 700; }
+.chart .score, .chart .threshold-label { stroke: var(--panel); stroke-width: 6px; stroke-linejoin: round; paint-order: stroke; }
+.chart .tick { fill: var(--muted); font-size: 18px; }
+.chart .bar { fill: var(--grey); }
+.chart .bar.flagged { fill: var(--red); }
+.chart .grid { stroke: var(--border); stroke-width: 1; }
+.chart .axis { stroke: var(--muted); stroke-width: 2; }
+.chart .threshold { stroke: var(--text); stroke-width: 3; stroke-dasharray: 10 7; }
+.chart .threshold-label { font-size: 18px; font-weight: 700; }
