@@ -42,7 +42,7 @@ Give it a dataset (and optionally the training script and model file). It:
 | **Numbers, not claims** | Detection quality is measured on a benchmark of planted bugs (LeakBench): recall per check, and false positives on clean pipelines. |
 
 ## Checks
-Built so far: **D1**. The rest are planned for the checkpoints below.
+Built so far: **D1** (target leakage), **D9** (secrets and personal data), the **SpiderSense Agent** (A2) with a guard on every tool call. The rest are planned for the checkpoints below.
 | ID | Check | How |
 |---|---|---|
 | D1 | Target leakage | Train one model, **scramble** each column (permutation importance) to see how much the model depends on it, then **retrain without** the suspects: a column that is decisive and irreplaceable gives the answer away. Thresholds measured on 2 leaky and 3 clean datasets |
@@ -81,18 +81,31 @@ Built so far: **D1**. The rest are planned for the checkpoints below.
 
 ## Roadmap (judge checkpoints every 4 hours)
 - [x] **CP1:** upload a CSV or pick a demo → target leakage (D1) → findings and chart on the dashboard; catches the prelim model's leaked feature and Titanic's `boat` column, with no false alarm on a clean dataset (D2 moved to CP2)
-- [ ] **CP2:** SpiderSense Agent v1 (A2) calling the checks as tools with a live trace; contamination (D2); script analysis with line numbers (D4, D6)
+- [x] **CP2:** SpiderSense Agent (A2) calling the checks as tools with a live trace and a guard decision on every call; privacy check (D9) with masked evidence
 - [ ] **CP3:** SpiderSense Guard (G3): input scan, tool policy, output redaction, audit log; grounded explanations (G1)
-- [ ] **CP4:** LeakBench scoreboard and attack suite; unsafe-pickle scanner (D8); secrets and personal-data scan (D9); D3, D5
-- [ ] **CP5:** generated failing tests; Fix Agent with a visible trace; fix → re-audit → green
-- [ ] **CP6:** calibration check (D7), a second real-world case, robustness
-- [ ] **CP7:** feature freeze, documentation, demo
+- [ ] **CP4:** LeakBench scoreboard and attack suite; contamination (D2) if time allows
+- [ ] **Final (about 11:00, 10 Oct):** feature freeze at 07:00, front page reframed around safety, demo hardening, presentation
 
 ## Stack
 Python 3.13 · FastAPI · pandas · scikit-learn · `ast` · `pickletools` · pytest · uv · React + Vite · Gemini API (OpenRouter and offline templates as fallbacks)
 
 ## Run it
-*Setup instructions are added as the code lands.*
+Needs Python 3.13 with [uv](https://docs.astral.sh/uv/), and Node 22.
+
+```bash
+# backend (from backend/): put GEMINI_API_KEY in ../.env first (see .env.example)
+uv sync
+uv run uvicorn main:app --port 8000 --env-file ../.env
+
+# dashboard (from the repo root, in a second terminal)
+npm ci --prefix frontend
+npm run dev --prefix frontend      # http://localhost:5173
+
+# tests
+cd backend && uv run pytest -q     # backend
+npm test --prefix frontend         # dashboard
+```
+Without a Gemini key the agent runs its offline plan: the same checks and findings, with template text instead of Gemini's words. API docs: http://127.0.0.1:8000/docs.
 
 ## Team
 - **muhyudheen:** detectors, ML, LLM guards

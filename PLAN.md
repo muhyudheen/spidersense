@@ -87,23 +87,25 @@ The judges asked for more agentic behaviour, with firewall-style protection. We 
 - **Claude Code (local session):** guides and reviews the owner's backend work, reviews the cloud session's reports (`frontend/CLOUD_REPORT.md`), and keeps `AI_USAGE.md` and `CLAUDE_MINUTES.md` up to date.
 - **Humans only:** the team's moving minutes document (Claude never writes or edits it), and answering the judges.
 
-## Timeline: judges every 4 hours
-Start (H0) confirmed: **11:00 IST, 9 Oct**. The judge visit times below assume visits every 4 hours from the start; adjust if the organizers announce different times.
-| Checkpoint | Time (IST) | What judges must see working |
+## Timeline: 24 hours, presentation at about 11:00 on 10 Oct
+The build started at 11:00 on 9 Oct. The final presentation, in front of all participants and the judges, is **24 hours after the start**. Judges visit every 4 hours.
+
+| Checkpoint | Time (IST) | What judges see working |
 |---|---|---|
-| H0–H1 | 11:00–12:00 | Repo, scope locked, roles, skeleton (FastAPI + Vite), `/health` |
-| **CP1 (H4)** | **15:00** | Upload CSV → D1 + D2 → findings JSON → bare dashboard list. **Live: D1 catches the prelim's leaked NLP feature.** |
-| **CP2 (H8)** | **19:00** | **SpiderSense Agent v1 (A2):** Gemini plans and calls D1/D2 as tools, with a live trace on the dashboard; D2 contamination; D4/D6 script analysis with line numbers |
-| **CP3 (H12)** | **23:00** | **SpiderSense Guard (G3):** input scan, tool policy, output redaction, audit log and Guard page; the injection demo; G1 grounded explanations with offline fallback |
-| **CP4 (H16)** | **03:00** | LeakBench scoreboard (recall, false positives) plus the **attack suite** (block rate, false blocks, denied actions executed); D8 pickle scanner; D9 secrets and personal-data scan; D3, D5 |
-| **CP5 (H20)** | **07:00** | Generated pytest per finding; **Fix Agent (A1)** with a visible tool-call trace: fix → re-audit → green (before/after) |
-| **CP6 (H24)** | **11:00** | D7, polish, second real-world case, robustness (big CSVs, bad inputs) |
-| **CP7 (H28)** | **15:00** | **Feature freeze.** README, AI_USAGE final, pitch rehearsed, backup demo video |
-| Final | 17:00 | Presentation |
+| CP1 ✅ | 15:00 | Upload or demo → D1 target leakage → findings and chart on the dashboard (prelim leak and Titanic's `boat` caught, clean data calm) |
+| **CP2** | **19:00** | **SpiderSense Agent (A2)** live: Gemini plans and calls the checks as tools, with a guard decision on every call. **D9 privacy** finds secrets and personal data, masked |
+| **CP3** | **23:00** | **SpiderSense Guard (G3):** input scan for prompt injection, the tool policy (allow / needs approval / deny), output redaction, audit log, Guard page. **Attack demo:** a poisoned training file tries to steal the API key and is blocked. G1: numbers in explanations checked against the evidence |
+| **CP4** | **03:00** | **Numbers:** a small LeakBench (planted bugs: caught vs missed, false alarms on clean data) and an attack suite (attacks blocked, benign requests not blocked); D2 contamination if time allows |
+| 03:00–07:00 | | Bug fixes, demo hardening (offline mode, odd files), the front page reframed around safety (model trust · data privacy · agent firewall). **Feature freeze at 07:00** |
+| 07:00–09:00 | | Slides and a backup demo video |
+| 09:00–10:30 | | Two or three timed rehearsals |
+| **Final** | **~11:00** | **Presentation** |
 
-**Sleep, staggered** so someone is always present for judges: the teammate sleeps about H13–H16 (00:00–03:00), muhyudheen about H16.5–H19.5 (03:30–06:30).
+**Sleep, staggered** so someone is always present for judges: abeltjoseph2005-art about 00:00–03:00, muhyudheen about 03:00–06:00.
 
-**Scope rule:** if a checkpoint slips, drop from the bottom of the detector table (D7, then D8), never the benchmark or the real-case demo.
+**Cut to fit 24 hours:** the Fix Agent (A1), D3 temporal leakage, D5 unseen categories, D7 calibration, generated tests per finding, and PDF report export. The story is stronger focused on: model trust (D1), data privacy (D9), and a guarded agent (A2 + G3), backed by numbers.
+
+**Two kinds of leakage (the framing):** *answer leakage* (the model sees the answer: D1) and *data leakage* (secrets and personal data escape: D9 plus the Guard's redaction). Track 2's "data leakage" most likely means the second; "model auditing" covers the first. SpiderSense covers both.
 
 ## For each judge visit (2 minutes)
 1. **Since last visit:** what we said we'd do, and what's done (show it live).
