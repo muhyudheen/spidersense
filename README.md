@@ -28,6 +28,7 @@ Give it a dataset (and optionally the training script and model file). It:
 3. **Writes a failing test** for each bug, so the fix can be proven.
 4. **Explains** each finding in plain English with an LLM that is **not allowed to make things up**.
 5. **Helps fix it** with a tool-using agent that is **itself constrained**: a tool allowlist, budgets, and human approval.
+6. **Runs as an agent behind a firewall:** the SpiderSense Agent plans the audit and calls the checks as tools, and every input, tool call and output passes through the SpiderSense Guard.
 
 ## Design principles (why you can trust it)
 | Principle | What it means |
@@ -36,13 +37,15 @@ Give it a dataset (and optionally the training script and model file). It:
 | **No hallucinated explanations** | The explainer must cite finding IDs, and every number it states must appear in the evidence. Anything else is dropped, and the drop count is shown. |
 | **Uploads are untrusted** | Uploaded code is **never executed** (static analysis only). Model files are scanned **without being loaded**. Injection-like text in uploads is reported as a finding. |
 | **Agents need guardrails** | The Fix Agent follows a policy table: **allow** (audit, run tests), **needs approval** (apply a patch), **deny** (shell, internet, deleting files). It has iteration and token budgets and shows a full tool-call trace. A human approves every patch, and LeakBench includes an attack that tries to make it break these rules. |
+| **A firewall around the agent** | The SpiderSense Guard scans inputs for prompt injection, allows / asks approval for / denies each tool call, redacts secrets from outputs, and logs every decision with its reason. |
 | **Works offline** | If the LLM API is unreachable, template explanations take over. The audit itself never needs the network. |
 | **Numbers, not claims** | Detection quality is measured on a benchmark of planted bugs (LeakBench): recall per check, and false positives on clean pipelines. |
 
-## Checks (planned)
+## Checks
+Built so far: **D1**. The rest are planned for the checkpoints below.
 | ID | Check | How |
 |---|---|---|
-| D1 | Target leakage | Each feature alone, in a cross-validated shallow model; flagged when it's "too good to be true" or far stronger than every other feature |
+| D1 | Target leakage | Train one model, **scramble** each column (permutation importance) to see how much the model depends on it, then **retrain without** the suspects: a column that is decisive and irreplaceable gives the answer away. Thresholds measured on 2 leaky and 3 clean datasets |
 | D2 | Train/test contamination | Duplicate and near-duplicate rows across splits; the same entity in both splits |
 | D3 | Temporal leakage | Training data from after the test period; features dated after the label |
 | D4 | Preprocessing fitted before the split | Static analysis (Python AST) of the training script |
@@ -54,6 +57,8 @@ Give it a dataset (and optionally the training script and model file). It:
 | G1 | Hallucination guard for explanations | Citation and number validation |
 | G2 | Prompt-injection guard | Uploads treated as data; injection attempts flagged |
 | A1 | Fix Agent | Propose a patch → re-audit with our tools → at most 3 tries → human approval |
+| A2 | SpiderSense Agent | Gemini plans the audit and calls the checks as tools, with a live trace |
+| G3 | SpiderSense Guard | Firewall around the agent: input scan, tool policy (allow / approve / deny), output redaction, audit log |
 
 ## Architecture
 ```
@@ -75,10 +80,10 @@ Give it a dataset (and optionally the training script and model file). It:
 ```
 
 ## Roadmap (judge checkpoints every 4 hours)
-- [ ] **CP1:** upload a CSV → target leakage (D1) and contamination (D2) → findings on the dashboard; catches the prelim model's leaked feature
-- [ ] **CP2:** temporal and evaluation checks, plus code analysis with line numbers (D3–D6)
-- [ ] **CP3:** guarded LLM explanations (G1, G2) and report export
-- [ ] **CP4:** LeakBench scoreboard, unsafe-pickle scanner (D8), secrets and personal-data scan (D9), evidence charts
+- [x] **CP1:** upload a CSV or pick a demo → target leakage (D1) → findings and chart on the dashboard; catches the prelim model's leaked feature and Titanic's `boat` column, with no false alarm on a clean dataset (D2 moved to CP2)
+- [ ] **CP2:** SpiderSense Agent v1 (A2) calling the checks as tools with a live trace; contamination (D2); script analysis with line numbers (D4, D6)
+- [ ] **CP3:** SpiderSense Guard (G3): input scan, tool policy, output redaction, audit log; grounded explanations (G1)
+- [ ] **CP4:** LeakBench scoreboard and attack suite; unsafe-pickle scanner (D8); secrets and personal-data scan (D9); D3, D5
 - [ ] **CP5:** generated failing tests; Fix Agent with a visible trace; fix → re-audit → green
 - [ ] **CP6:** calibration check (D7), a second real-world case, robustness
 - [ ] **CP7:** feature freeze, documentation, demo
@@ -91,7 +96,7 @@ Python 3.13 · FastAPI · pandas · scikit-learn · `ast` · `pickletools` · py
 
 ## Team
 - **muhyudheen:** detectors, ML, LLM guards
-- **abeltjoseph2005-art**
+- **abeltjoseph2005-art:** manages the dashboard, which is built by an AI coding agent
 
 ## AI disclosure
-We use AI coding assistants during the build and Gemini inside the product (finding explanations). Every AI contribution is logged in [`AI_USAGE.md`](AI_USAGE.md). The team reviews, tests and can explain all code. The full plan is in [`PLAN.md`](PLAN.md).
+We use AI coding assistants during the build and Gemini inside the product (finding explanations). A full log of AI contributions is published with the final submission. The team reviews, tests and can explain all code. The full plan is in [`PLAN.md`](PLAN.md).
