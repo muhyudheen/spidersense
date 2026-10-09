@@ -143,12 +143,13 @@ backend/
 │   ├── environment.py       the fake office and its fake tools; logs what really ran
 │   ├── harness.py           execute_tool(): allowlist → guard → tool
 │   ├── scenarios.py         9 attacks + 12 normal tasks
-│   └── runner.py            runs everything 3 ways and computes the metrics
+│   ├── runner.py            runs everything 3 ways and computes the metrics
+│   └── live.py              live mode: a real Gemini model plays OfficeBot through the same gate
 ├── agent.py                 ML Audit agent: Gemini plans, our checks decide
 ├── d1.py                    D1 target-leakage check
 ├── d9.py                    D9 secrets and personal-data check
 ├── demo/                    demo datasets
-└── tests/                   115 tests
+└── tests/                   140 tests
 frontend/                    React + Vite dashboard
 ```
 
@@ -158,6 +159,7 @@ frontend/                    React + Vite dashboard
 | GET | `/api/health` | Health check |
 | GET | `/api/redteam/scenarios` | Lists the attacks and normal tasks |
 | POST | `/api/redteam/run?mode=strict\|assist` | Runs the full suite and returns metrics plus every tool call with its decision |
+| POST | `/api/redteam/live/{scenario}?config=…&mode=…` | A real Gemini model plays OfficeBot on one scenario; falls back to the scripted replay without Gemini |
 | GET | `/api/demo-datasets` | Lists the ML Audit demo datasets |
 | POST | `/api/audit`, `/api/audit/demo/{name}` | Runs D1 and D9 on an uploaded or demo dataset |
 | POST | `/api/agent`, `/api/agent/demo/{name}` | Runs the ML Audit agent with a guarded tool-call trace |
@@ -180,17 +182,29 @@ The ML Audit agent audits a dataset by itself. Gemini plans the audit and calls 
 | **Nothing real is touched** | Red-team runs use fake tools and reserved `.example` domains: no real emails, payments, commands or network calls. Uploaded code is never executed. |
 | **Numbers, not claims** | Results come from the office's own log of what actually ran, not from what the agent said. |
 
+## Live mode: a real model
+`redteam/live.py` lets a real Gemini model play OfficeBot through the same gate, mock world, canaries and judging. It reports whether the model **took the bait** (tried the attacker's action) and whether the attack **succeeded**. Unknown tools and bad arguments never reach the mock world. Without a Gemini key it runs the scripted replay and says so.
+
+What we saw (9 Oct, `gemini-3.5-flash-lite`, strict): the model **ignored all 8 OfficeBot attacks**, so the guard had nothing to stop, and the guard still **blocked the reply-to-sender task**, the same friction as in the suite. Models can be fooled by stronger attacks than ours, which is why the suite tests the worst case and the guard doesn't depend on the model.
+
+```bash
+# from backend/
+uv run --env-file ../.env python -m redteam.live exfil_email
+```
+
 ## Limitations
 - **Reworded leaks.** If the AI rewrites private data in its own words (a summary instead of a copy), text matching can miss it.
 - **Friction.** Replying to an email's sender is stopped, because that address comes from outside.
-- **Scripted agent.** The suite plays a fully fooled agent for repeatable numbers. A live mode with a real model is planned.
+- **Scripted agent.** The suite plays a fully fooled agent for repeatable numbers. Live mode runs a real model instead (see [Live mode](#live-mode-a-real-model)).
+- **Labels are per tool, not per field.** The customer database is trusted, but a customer can type an address into their own name or notes field, and that address would count as trusted. Field-level labels are a possible next step.
+- **Commands the agent invents itself.** The guard blocks commands copied from untrusted content and leaks inside commands, but a harmless-looking command the agent makes up (`ls -la`) is left to the allowlist.
 - **Our suite only.** 9 attacks cover the main types (exfiltration, payment, command, canary, storage, multi-step, encoding, ML audit), not every possible attack.
 
 ## Roadmap (judge checkpoints every 4 hours)
 - [x] **CP1:** ML Audit: upload a CSV or pick a demo → target leakage (D1) → findings and chart on the dashboard
 - [x] **CP2:** ML Audit agent (A2) calling the checks as tools with a live trace and a guard decision on every call; privacy check (D9) with masked evidence
 - [ ] **CP3:** Data-Flow Guard + Red-Team Simulator (backend built and tested; dashboard page in progress)
-- [ ] **Next:** live mode with a real Gemini agent against the same attacks; guard API so other agents can use it
+- [ ] **Next:** guard API so other agents can use it; field-level labels
 - [ ] **Final (about 11:00, 10 Oct):** feature freeze at 07:00, demo hardening, presentation
 
 ## Stack
