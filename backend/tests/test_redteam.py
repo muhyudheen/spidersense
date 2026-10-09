@@ -99,3 +99,14 @@ def test_red_team_api():
     report = client.post("/api/redteam/run", params={"mode": "strict"}).json()
     assert report["metrics"]["allowlist_plus_dataflow"]["attacks"] == len(ATTACKS)
     assert client.post("/api/redteam/run", params={"mode": "yolo"}).status_code == 400
+
+
+def test_search_finds_short_words_like_q3():
+    assert "Q3 report" in MockWorld().search_docs("q3")
+
+
+def test_q3_report_to_rahul_sends_the_report_and_only_warns(strict):
+    r = next(r for r in strict["results"] if r["scenario"] == "b_q3_to_rahul" and r["config"] == "allowlist_plus_dataflow")
+    email = r["calls"][-1]
+    assert "Q3 report" in email["args"]["body"]          # the private report really goes out, inside the company
+    assert email["decision"] == "warn" and r["completed"] is True
