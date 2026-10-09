@@ -7,19 +7,21 @@ You build the **dashboard** (React + Vite) in `frontend/`. The backend (FastAPI,
 Event: TatHack '26 finale, 30-hour build, **judges visit every 4 hours**. **First checkpoint: CP1 at 15:00 IST, 9 Oct.** Everything listed for CP1 must work by **14:45**.
 
 ## Rules (the owner set these)
-1. **Only touch `frontend/`.** Never edit `backend/`, `PLAN.md`, `README.md`, `AI_USAGE.md` or `CLAUDE_MINUTES.md`. If you need a backend change, say so in your report.
-2. **Commit messages are pre-approved.** Use exactly the ones listed under "Commits" below, one commit per step. If you need a different commit, stop and ask the owner. **No `Co-Authored-By` line.**
-3. **Git:** work on `master`. Before every push, run `git pull --rebase origin master` (the backend session pushes `backend/` to the same branch; the folders don't overlap). If the push is refused (403), stop and report; don't create workarounds.
+1. **Only touch `frontend/`.** Never edit `backend/`, `PLAN.md` or `README.md`. If you need a backend change, say so in your report.
+2. **Commit messages follow Conventional Commits** (judges check this): `type(scope): description`, lowercase, imperative, e.g. `feat(dashboard): add guard page with audit log`. Types: `feat`, `fix`, `test`, `docs`, `chore`, `refactor`. Use the pre-approved messages under "Commits" below; for anything else, ask first. Never reuse a message for two commits. **No `Co-Authored-By` line.**
+3. **Git: branches and pull requests.** The default branch is **`main`** (`master` no longer exists). Never commit to `main` directly. For each piece of work, branch from the latest `main` (`feat/dashboard-<topic>`), commit there, push the branch, and open a **pull request into `main`** with a short description. **abeltjoseph2005-art reviews and merges it** (a merge commit, so the branch stays visible in the history). After a merge, start the next branch from the updated `main`. If a push is refused (403), stop and report; don't create workarounds.
 4. **Dependencies:** only the standard Vite React template (`react`, `react-dom`, `vite`, `@vitejs/plugin-react`). **No chart, UI or CSS libraries.** Charts are plain SVG. Ask before adding anything else.
 5. **Every number on screen comes from the API response**, never hardcoded. No fake banners like "THREAT DETECTED". The mock file exists only for development.
 6. **Never print, log or commit secrets.** There is no key in the frontend at all.
 7. **Report every step in `frontend/CLOUD_REPORT.md`**, inside the same commit as the step, so it can be reviewed from the repo. Append a section per commit: the time (IST), the commit message, **what you built**, **files changed**, **how you checked it** (build, tests, what you saw), **open problems**, and **anything the backend needs**. Also give the same summary in chat to abeltjoseph2005-art. The owner reviews these reports and logs AI usage from them.
 
 ## Commits (pre-approved, in order)
-1. `Add frontend skeleton (React + Vite)`
-2. `Add upload page and status header`
-3. `Add findings list and D1 chart`
-4. `Connect dashboard to the audit API`
+**Done before CP1** (old message style): skeleton, upload page and status header, findings list and D1 chart, API connection.
+
+**Next, after CP1** (Conventional Commits; the API contracts for these pages are added to this brief before you start them):
+1. `feat(dashboard): add agent page with live tool-call trace` (branch `feat/dashboard-agent`, CP2)
+2. `feat(dashboard): add guard page with policy table and audit log` (branch `feat/dashboard-guard`, CP3)
+3. `fix(dashboard): …` for fixes, one per problem, each with a specific description
 
 ## Timeline
 | When (IST) | Step | Commit |
