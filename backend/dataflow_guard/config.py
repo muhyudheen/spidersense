@@ -69,7 +69,8 @@ def load_config(path=DEFAULT_PATH, **overrides):
             name=name, output_integrity=Integrity(out["integrity"]),
             output_confidentiality=Confidentiality(out["confidentiality"]),
             external=bool(spec.get("external", False)),
-            sinks={arg: [SinkType(kind)] for arg, kind in spec.get("sinks", {}).items()})
+            sinks={arg: [SinkType(k) for k in (kind if isinstance(kind, list) else [kind])]   # one type or several
+                   for arg, kind in spec.get("sinks", {}).items()})
     unknown_out = raw["defaults"]["unknown_tool_output"]
     cfg = GuardConfig(
         enabled=g["enabled"], mode=g["mode"],
