@@ -10,7 +10,7 @@ class ProvenanceLedger:
         self.by_entity = {}      # entity value -> entry ids (inverted index)
         self.by_shingle = {}     # shingle -> entry ids
 
-    def add(self, text, source_kind, origin, integrity, confidentiality, step=0):
+    def add(self, text, source_kind, origin, integrity, confidentiality, step):
         """Record content as it enters the context. Never record the model's own messages: they are what gets checked."""
         norm = normalize(text)
         entities = extract_entities(norm, normalized=True)
