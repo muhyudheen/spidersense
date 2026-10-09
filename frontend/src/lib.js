@@ -20,17 +20,19 @@ export function parseCsvHeader(text) {
   return names.filter((n) => n !== '')
 }
 
+export const BACKEND_DOWN = 'Backend not reachable: start it with uv run uvicorn main:app --port 8000 in backend/'
+
 // The message to show for a failed API call. FastAPI sends {"detail": "..."}, or a list of
-// {loc, msg} objects for a 422 validation error.
+// {loc, msg} objects for a 422 validation error. A stopped backend shows up as a network error,
+// or through the Vite dev proxy as a 502/503/504 without a JSON body.
 export function errorMessage(status, body) {
   const detail = body && body.detail
   if (typeof detail === 'string' && detail) return detail
   if (Array.isArray(detail) && detail.length) {
     return detail.map((d) => (d.loc ? `${d.loc.filter((x) => x !== 'body').join('.')}: ${d.msg}` : d.msg)).join('; ')
   }
-  // Through the Vite proxy a stopped backend shows up as a 5xx without a JSON body
-  if (status >= 500) return `Request failed (HTTP ${status}). Is the backend running on port 8000?`
-  return status ? `Request failed (HTTP ${status})` : 'Could not reach the backend'
+  if (!status || [502, 503, 504].includes(status)) return BACKEND_DOWN
+  return `Request failed (HTTP ${status})`
 }
 
 // The header pill: grey before any audit, red when tingling, green when calm.
@@ -54,9 +56,21 @@ export function sortFindings(findings) {
   return [...findings].sort((a, b) => rank(a) - rank(b))
 }
 
-// "R2" → "R²" for display; other metric names unchanged.
+// "R2" → "R²" wherever it appears, e.g. "skill lost when scrambled (R2)"; other text unchanged.
 export function metricLabel(metric) {
-  return metric === 'R2' ? 'R²' : metric
+  return String(metric).replace(/\bR2\b/g, 'R²')
+}
+
+// The D1 chart title from d1_scores.metric: R² rendered, first letter capitalised.
+export function chartTitle(metric) {
+  const label = metricLabel(metric)
+  return label.charAt(0).toUpperCase() + label.slice(1)
+}
+
+// Evidence keys as readable labels: "skill_lost_when_scrambled" → "Skill lost when scrambled".
+export function readableKey(key) {
+  const label = key.replaceAll('_', ' ')
+  return label.charAt(0).toUpperCase() + label.slice(1)
 }
 
 // Evidence values for the key/value table: numbers and strings as they are, anything else as JSON.
@@ -85,4 +99,12 @@ export function checkAudit(body) {
   if (body.d1_scores != null && !Array.isArray(body.d1_scores.features)) missing.push('d1_scores.features (a list)')
   if (missing.length) throw new Error(`Unexpected response from the backend: missing ${missing.join(', ')}`)
   return body
+}
+
+// Bars to draw: the top `max` by score plus every flagged one (a flagged column is never hidden).
+// Returns the hidden ones too, so the chart can say how many there are and their highest score.
+export function visibleBars(bars, max) {
+  const shown = bars.filter((b, i) => i < max || b.flagged)
+  const hidden = bars.filter((b, i) => !(i < max || b.flagged))
+  return { shown, hidden, hiddenMax: hidden.length ? Math.max(...hidden.map((b) => b.score)) : null }
 }

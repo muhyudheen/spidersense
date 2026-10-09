@@ -1,23 +1,20 @@
 {
-  "audit_id": "d4e5f6",
+  "audit_id": "mock-breast-cancer",
   "dataset": {"name": "breast_cancer", "rows": 569, "columns": 31, "target": "target",
               "task": "classification"},
   "status": "calm",
   "counts": {"high": 0, "medium": 0, "low": 0},
   "findings": [],
   "d1_scores": {
-    "metric": "AUC",
-    "threshold": 0.98,
+    "metric": "skill lost when scrambled (AUC)",
+    "threshold": 0.2,
     "features": [
-      {"name": "worst perimeter", "score": 0.95, "flagged": false},
-      {"name": "worst radius", "score": 0.94, "flagged": false},
-      {"name": "worst area", "score": 0.94, "flagged": false},
-      {"name": "mean concave points", "score": 0.93, "flagged": false},
-      {"name": "worst concave points", "score": 0.93, "flagged": false},
-      {"name": "mean perimeter", "score": 0.91, "flagged": false},
-      {"name": "mean texture", "score": 0.71, "flagged": false},
-      {"name": "mean smoothness", "score": 0.68, "flagged": false},
-      {"name": "mean fractal dimension", "score": 0.52, "flagged": false}
+      {"name": "worst concave points", "score": 0.02, "flagged": false},
+      {"name": "worst perimeter", "score": 0.01, "flagged": false},
+      {"name": "worst area", "score": 0.01, "flagged": false},
+      {"name": "mean concave points", "score": 0.01, "flagged": false},
+      {"name": "worst texture", "score": 0.0, "flagged": false},
+      {"name": "mean texture", "score": 0.0, "flagged": false}
     ]
   }
 }

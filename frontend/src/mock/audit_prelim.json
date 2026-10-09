@@ -1,5 +1,5 @@
 {
-  "audit_id": "a1b2c3",
+  "audit_id": "mock-prelim",
   "dataset": {"name": "prelim", "rows": 5000, "columns": 7, "target": "Delay_Hours",
               "task": "regression"},
   "status": "tingling",
@@ -8,25 +8,25 @@
     {
       "id": "D1-1",
       "check": "D1",
-      "title": "Target leakage: NLP_Severity_Score predicts the target almost by itself",
+      "title": "Target leakage: the model depends on NLP_Severity_Score",
       "severity": "high",
-      "summary": "Using only NLP_Severity_Score, a tiny model reaches R² 0.83; the next-best column reaches 0.21.",
-      "evidence": {"metric": "R2", "score": 0.83, "next_best_column": "Transport_Mode",
-                   "next_best_score": 0.21, "threshold": 0.6},
+      "summary": "Scrambling NLP_Severity_Score costs the model 0.62 of its R² skill (threshold 0.2).",
+      "evidence": {"metric": "R2", "skill_with_all_columns": 0.91, "skill_lost_without_column": 0.55,
+                   "skill_lost_when_scrambled": 0.62, "threshold": 0.2},
       "location": {"column": "NLP_Severity_Score"},
       "fix": "Check how NLP_Severity_Score is computed. If it uses the target or information from after the prediction time, remove it."
     }
   ],
   "d1_scores": {
-    "metric": "R2",
-    "threshold": 0.6,
+    "metric": "skill lost when scrambled (R2)",
+    "threshold": 0.2,
     "features": [
-      {"name": "NLP_Severity_Score", "score": 0.83, "flagged": true},
-      {"name": "Transport_Mode", "score": 0.21, "flagged": false},
-      {"name": "Origin_Node", "score": 0.19, "flagged": false},
-      {"name": "Destination_Node", "score": 0.05, "flagged": false},
-      {"name": "Condition_Flag", "score": 0.0, "flagged": false},
-      {"name": "Leg_Type", "score": 0.17, "flagged": false}
+      {"name": "NLP_Severity_Score", "score": 0.62, "flagged": true},
+      {"name": "Transport_Mode", "score": 0.08, "flagged": false},
+      {"name": "Origin_Node", "score": 0.03, "flagged": false},
+      {"name": "Destination_Node", "score": 0.02, "flagged": false},
+      {"name": "Leg_Type", "score": 0.01, "flagged": false},
+      {"name": "Condition_Flag", "score": 0.0, "flagged": false}
     ]
   }
 }

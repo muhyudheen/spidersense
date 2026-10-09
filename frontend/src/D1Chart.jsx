@@ -1,20 +1,23 @@
-import { d1Bars, metricLabel } from './lib.js'
+import { chartTitle, d1Bars, metricLabel, visibleBars } from './lib.js'
 
 // Horizontal bar chart of D1 single-feature scores, in plain SVG. Coordinates are viewBox units;
 // the chart scales to the page width, so 20-unit text is about 20 px on a typical screen.
 const W = 1000
-const ROW = 42
-const BAR = 28
 const TOP = 34 // room for the threshold label
 const AXIS = 40 // room for the tick labels
 const SCORE_W = 70 // room for the score after the longest bar
 const MAX_NAME = 30
+const MAX_BARS = 10 // so the chart fits on a 720 px projector screen; flagged bars are always drawn
 const TICKS = [0, 0.25, 0.5, 0.75, 1]
 
 const shortName = (name) => (name.length > MAX_NAME ? `${name.slice(0, MAX_NAME - 1)}…` : name)
 
 export default function D1Chart({ d1 }) {
-  const bars = d1Bars(d1)
+  const all = d1Bars(d1)
+  const { shown: bars, hidden, hiddenMax } = visibleBars(all, MAX_BARS)
+  // Tighter rows when there are many columns, so the chart fits on one screen
+  const ROW = bars.length > 8 ? 32 : 42
+  const BAR = ROW - 14
   const metric = metricLabel(d1.metric)
   // Label column wide enough for the longest name in bold (about 13 units per character at 20-unit text)
   const labelW = Math.min(400, Math.max(160, Math.max(...bars.map((b) => shortName(b.name).length)) * 13))
@@ -24,20 +27,20 @@ export default function D1Chart({ d1 }) {
   const plotBottom = TOP + bars.length * ROW
   const height = plotBottom + AXIS
   const hasThreshold = typeof d1.threshold === 'number'
-  const flagged = bars.filter((b) => b.flagged).length
+  const flagged = all.filter((b) => b.flagged).length
 
   return (
     <figure className="chart">
       <figcaption>
-        <h2>D1 · How well each column alone predicts the target ({metric})</h2>
+        <h2>D1 · {chartTitle(d1.metric)}</h2>
         <div className="legend">
           <span><i className="swatch swatch-flagged" /> flagged ({flagged})</span>
-          <span><i className="swatch swatch-ok" /> not flagged ({bars.length - flagged})</span>
+          <span><i className="swatch swatch-ok" /> not flagged ({all.length - flagged})</span>
           {hasThreshold && <span><i className="swatch swatch-threshold" /> threshold {d1.threshold}</span>}
         </div>
       </figcaption>
       <svg viewBox={`0 0 ${W} ${height}`} role="img"
-           aria-label={`D1 ${metric} per column: ${bars.map((b) => `${b.name} ${b.score}`).join(', ')}`}>
+           aria-label={`D1 ${metric} per column: ${all.map((b) => `${b.name} ${b.score}`).join(', ')}`}>
         {TICKS.map((t) => (
           <g key={t}>
             <line className="grid" x1={x(t)} x2={x(t)} y1={TOP - 6} y2={plotBottom} />
@@ -73,6 +76,11 @@ export default function D1Chart({ d1 }) {
           </text>
         )}
       </svg>
+      {hidden.length > 0 && (
+        <p className="chart-note" title={hidden.map((b) => `${b.name} ${b.score}`).join(', ')}>
+          +{hidden.length} more column{hidden.length === 1 ? '' : 's'} not drawn, none above {hiddenMax}
+        </p>
+      )}
     </figure>
   )
 }

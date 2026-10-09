@@ -81,7 +81,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .main {
   grid-area: main;
-  padding: 1.5rem 2rem;
+  padding: 1.1rem 2rem 1.5rem;
   min-width: 0;
 }
 
@@ -221,6 +221,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .count-low { color: var(--accent); }
 
 .no-findings {
+  margin-top: 1rem;
   padding: 0.8rem 1.1rem;
   border: 1px solid var(--green);
   border-radius: var(--radius);
@@ -279,15 +280,17 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* D1 chart */
 .chart {
-  margin: 1.5rem 0 0;
-  padding: 1rem 1.25rem;
+  margin: 1rem 0 0;
+  padding: 0.8rem 1.25rem;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   max-width: 1040px;
 }
-.chart h2 { margin: 0 0 0.4rem; }
-.chart svg { display: block; width: 100%; height: auto; margin-top: 0.5rem; }
+.chart figcaption { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 1.5rem; }
+.chart h2 { margin: 0; }
+.chart-note { margin: 0.25rem 0 0; color: var(--muted); font-size: 0.95rem; }
+.chart svg { display: block; width: 100%; height: auto; margin-top: 0.25rem; }
 .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; color: var(--muted); }
 .legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
 .swatch { display: inline-block; width: 1.1rem; height: 0.8rem; border-radius: 2px; }
@@ -313,13 +316,5 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   border-radius: 6px;
   background: transparent;
   color: var(--red);
-  font-weight: 700;
-}
-.mock-banner {
-  margin: 0 0 1rem;
-  padding: 0.5rem 1rem;
-  border: 2px dashed var(--amber);
-  border-radius: var(--radius);
-  color: var(--amber);
   font-weight: 700;
 }

@@ -1,0 +1,39 @@
+{
+  "audit_id": "mock-titanic",
+  "dataset": {"name": "titanic", "rows": 1309, "columns": 14, "target": "survived",
+              "task": "classification"},
+  "status": "tingling",
+  "counts": {"high": 1, "medium": 0, "low": 0},
+  "findings": [
+    {
+      "id": "D1-1",
+      "check": "D1",
+      "title": "Target leakage: the model depends on boat",
+      "severity": "high",
+      "summary": "Scrambling boat costs the model 0.71 of its AUC skill (threshold 0.2).",
+      "evidence": {"metric": "AUC", "skill_with_all_columns": 0.98, "skill_lost_without_column": 0.12,
+                   "skill_lost_when_scrambled": 0.71, "threshold": 0.2},
+      "location": {"column": "boat"},
+      "fix": "A lifeboat number is only known for survivors. Remove boat (and other columns recorded after the outcome) before training."
+    }
+  ],
+  "d1_scores": {
+    "metric": "skill lost when scrambled (AUC)",
+    "threshold": 0.2,
+    "features": [
+      {"name": "boat", "score": 0.71, "flagged": true},
+      {"name": "sex", "score": 0.01, "flagged": false},
+      {"name": "body", "score": 0.01, "flagged": false},
+      {"name": "pclass", "score": 0.0, "flagged": false},
+      {"name": "name", "score": 0.0, "flagged": false},
+      {"name": "age", "score": 0.0, "flagged": false},
+      {"name": "sibsp", "score": 0.0, "flagged": false},
+      {"name": "parch", "score": 0.0, "flagged": false},
+      {"name": "ticket", "score": 0.0, "flagged": false},
+      {"name": "fare", "score": 0.0, "flagged": false},
+      {"name": "cabin", "score": 0.0, "flagged": false},
+      {"name": "embarked", "score": 0.0, "flagged": false},
+      {"name": "home.dest", "score": 0.0, "flagged": false}
+    ]
+  }
+}

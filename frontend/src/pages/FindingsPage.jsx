@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import D1Chart from '../D1Chart.jsx'
-import { SEVERITY_ORDER, evidenceValue, sortFindings } from '../lib.js'
+import { SEVERITY_ORDER, evidenceValue, readableKey, sortFindings } from '../lib.js'
 
 export default function FindingsPage({ audit }) {
   if (!audit) {
@@ -26,10 +26,11 @@ export default function FindingsPage({ audit }) {
         ))}
       </p>
 
+      {/* The chart is the demo's main visual, so it comes before the list and is visible without scrolling */}
+      {audit.d1_scores && <D1Chart d1={audit.d1_scores} />}
+
       {/* Keyed by audit, so a new audit starts with every card closed */}
       <FindingList key={audit.audit_id} findings={audit.findings} />
-
-      {audit.d1_scores && <D1Chart d1={audit.d1_scores} />}
     </section>
   )
 }
@@ -77,7 +78,7 @@ function FindingDetail({ finding }) {
           <table className="evidence">
             <tbody>
               {evidence.map(([k, v]) => (
-                <tr key={k}><th scope="row">{k.replaceAll('_', ' ')}</th><td><code>{evidenceValue(v)}</code></td></tr>
+                <tr key={k}><th scope="row">{readableKey(k)}</th><td><code>{evidenceValue(v)}</code></td></tr>
               ))}
             </tbody>
           </table>
