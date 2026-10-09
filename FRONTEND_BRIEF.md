@@ -133,3 +133,60 @@ Put this mock response in `frontend/src/mock/audit_prelim.json`, plus a calm var
 - All three demo buttons work against the real backend: prelim and titanic → tingling with the D1 bar chart, breast_cancer → calm.
 - Uploading a CSV and picking a target works end to end.
 - It's readable on a projector, and nothing is hardcoded.
+
+---
+
+# CP2: Agent page (branch `feat/dashboard-agent`, commit `feat(dashboard): add agent page with live tool-call trace`)
+
+**Goal for judges at 19:00:** "Ask SpiderSense to audit a dataset, and watch the agent plan, call the checks as tools, and report." The SpiderSense Agent (Gemini) decides **which tool to call and why**; the tools (our deterministic checks) decide **what is a finding**. Every tool call carries a **guard decision** (allowed or denied), the first piece of the SpiderSense Guard (CP3).
+
+## Agent API contract
+**`POST /api/agent/demo/{name}`**: form field `goal` (optional; default "Audit this dataset for silent ML bugs.").
+**`POST /api/agent`**: multipart with `file` (CSV), `target`, and optional `goal`.
+
+Response:
+```json
+{
+  "run_id": "9f2c1a7b",
+  "goal": "Audit this dataset for silent ML bugs.",
+  "mode": "llm",
+  "model": "gemini-3.5-flash-lite",
+  "steps": [
+    {"n": 1, "type": "thought", "text": "I am checking the dataset profile to understand its structure."},
+    {"n": 2, "type": "tool_call", "tool": "profile_dataset", "args": {},
+     "guard": {"decision": "allowed", "reason": "on the allowlist"}},
+    {"n": 3, "type": "tool_result", "tool": "profile_dataset",
+     "result": {"rows": 1309, "target": "survived", "task": "classification",
+                "columns": {"pclass": {"type": "int64", "missing": 0}}}},
+    {"n": 4, "type": "thought", "text": "I am running the target-leakage check."},
+    {"n": 5, "type": "tool_call", "tool": "run_d1", "args": {},
+     "guard": {"decision": "allowed", "reason": "on the allowlist"}},
+    {"n": 6, "type": "tool_result", "tool": "run_d1",
+     "result": {"findings": [{"id": "D1-1", "column": "boat", "summary": "Scrambling boat wipes out 0.71 of the model's skill…"}]}},
+    {"n": 7, "type": "final", "text": "Target leakage found: the boat column gives the answer away…"}
+  ],
+  "audit": { "…": "exactly the same object as the POST /api/audit response (status, counts, findings, d1_scores)" }
+}
+```
+- `mode`: `"llm"` (Gemini planned the audit) or `"offline"` (Gemini unreachable, so a fixed plan ran with template text; `model` is then `null`).
+- Step `type`: `thought` (the agent's reason), `tool_call` (tool, args, guard), `tool_result` (tool, result), `final` (summary). Steps are in order; `n` starts at 1.
+- `guard.decision`: `"allowed"` or `"denied"`, plus a `reason`. A denied call's `tool_result` is `{"error": "denied by the SpiderSense Guard"}`.
+- The `final` text may contain simple Markdown (`**bold**`, `*` bullets): render bold and bullets, or show it as plain text. **Never render it as HTML.** It's LLM output.
+- **Timing:** a run takes about 5–40 seconds (it depends on Gemini's load). The offline plan takes about 3 seconds.
+
+## Agent page
+- **Demo buttons** (same list as the Audit page) and an **upload + target** option, plus a **goal** text box prefilled with the default.
+- **While running:** "SpiderSense agent is thinking…" with a spinner and the elapsed seconds. It can take up to about 40 s, so make the waiting feel alive.
+- **The trace:** a vertical timeline, one row per step, appearing one after another (about 300 ms apart) when the response arrives:
+  - `thought`: an italic speech line with a 💭 icon
+  - `tool_call`: the tool name in monospace, the args, and a **guard badge** (green ALLOWED or red DENIED, with the reason as a tooltip)
+  - `tool_result`: collapsible; a one-line summary (e.g. "1 finding: boat" or "1,309 rows, 14 columns"), with the full JSON on click
+  - `final`: a highlighted summary box
+- **The header:** the mode badge (`LLM · gemini-3.5-flash-lite`, or `OFFLINE PLAN` in amber) and the run id.
+- **Below the trace:** the same findings summary, D1 chart and status pill as the Findings page, from `audit` (reuse the components).
+- **Sidebar:** add "Agent" between Audit and Findings.
+
+## Done for CP2 when
+- `npm test` and `npm run build` pass (mock the agent response in tests: one `llm` run, one `offline` run, and one with a DENIED step).
+- On the laptop with the real backend: the titanic agent run shows the trace and finds `boat`; breast_cancer comes back calm.
+- PR from `feat/dashboard-agent` into `main`, reviewed and merged by Abel.
