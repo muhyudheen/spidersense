@@ -7,6 +7,7 @@ class ProvenanceLedger:
     def __init__(self, run_id):
         self.run_id = run_id
         self.entries = []
+        self.by_id = {}          # entry id -> entry
         self.by_entity = {}      # entity value -> entry ids (inverted index)
         self.by_shingle = {}     # shingle -> entry ids
 
@@ -25,6 +26,7 @@ class ProvenanceLedger:
                             shingles=shingles(norm, normalized=True),
                             entities=entities)
         self.entries.append(entry)
+        self.by_id[entry.id] = entry
         for values in entry.entities.values():
             for v in values:
                 self.by_entity.setdefault(v, set()).add(entry.id)
@@ -33,7 +35,7 @@ class ProvenanceLedger:
         return entry
 
     def get(self, entry_id):
-        return self.entries[int(entry_id.split("-")[1]) - 1]
+        return self.by_id[entry_id]
 
     def with_entity(self, value):
         """Entries whose text contains this entity (an email, a registered domain, a UPI ID, ...)."""
