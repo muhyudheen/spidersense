@@ -1,4 +1,4 @@
-# LeakLens: an automated auditor for silently broken ML pipelines
+# SpiderSense: early warning for silently broken ML pipelines
 
 TatHack '26 finale · **Track 2: Safe & Trustworthy AI** · 30-hour build · team muhyudheen + abeltjoseph2005-art
 Working name, which can change. Plan written 9 Oct 2026, 10:50 IST.
@@ -6,10 +6,10 @@ Working name, which can change. Plan written 9 Oct 2026, 10:50 IST.
 ## Goal
 **Catch the bugs that make an ML model look good while it's wrong: target leakage, train/test contamination, unevaluated models, unsafe model files. Show the evidence, generate a failing test for each bug, and explain it in plain English without the explanation itself hallucinating.**
 
-Why us: in the prelim we were handed a model that ran fine and was silently broken. We found its leakage by hand (the news score was computed from the delay it predicted), plus 130 other silent bugs. LeakLens automates that audit.
+Why us: in the prelim we were handed a model that ran fine and was silently broken. We found its leakage by hand (the news score was computed from the delay it predicted), plus 130 other silent bugs. SpiderSense automates that audit.
 
 The track asks for "data leakage, model auditing, hallucinations, prompt injection, unsafe tool usage". We cover all five:
-| Track keyword | Where in LeakLens |
+| Track keyword | Where in SpiderSense |
 |---|---|
 | Data leakage | Detectors D1–D4 |
 | Model auditing | D5–D7, the benchmark scoreboard |
@@ -50,7 +50,7 @@ Findings: {id, detector, severity, evidence (numbers, rows, line numbers), fix}
 
 ## Proof that it works (what makes us beat strong competitors)
 1. **LeakBench:** a seeded generator of about 25 small pipelines, each with one known planted bug (D1–D6, D8), plus clean ones. The dashboard shows **recall per detector and false positives on the clean pipelines**. Numbers, not claims.
-2. **Real case:** the organizers' own prelim model (Supplychainer `Code/real_dataset_builder.py` + `ML_Model_Real.py`). LeakLens flags the leaked `NLP_Severity_Score` (DS4), the unused test split (MR2) and the random split (MR4), the bugs we found by hand in the prelim.
+2. **Real case:** the organizers' own prelim model (Supplychainer `Code/real_dataset_builder.py` + `ML_Model_Real.py`). SpiderSense flags the leaked `NLP_Severity_Score` (DS4), the unused test split (MR2) and the random split (MR4), the bugs we found by hand in the prelim.
 3. **Fix loop:** apply the suggested fix → re-audit → the finding turns green, and the generated test passes.
 4. **Our own tests:** test-first, like the prelim (tests committed failing, then one commit per feature).
 
