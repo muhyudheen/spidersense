@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import AuditTabs from '../AuditTabs.jsx'
 import D1Chart from '../D1Chart.jsx'
 import { SEVERITY_ORDER, evidenceValue, readableKey, sortFindings } from '../lib.js'
 
@@ -6,6 +7,7 @@ export default function FindingsPage({ audit }) {
   if (!audit) {
     return (
       <section>
+        <AuditTabs current="findings" audit={audit} />
         <h1>Findings</h1>
         <p className="muted">No audit yet. Run one from the Audit page.</p>
       </section>
@@ -14,6 +16,7 @@ export default function FindingsPage({ audit }) {
 
   return (
     <section>
+      <AuditTabs current="findings" audit={audit} />
       <h1>Findings</h1>
       <AuditView audit={audit} />
     </section>

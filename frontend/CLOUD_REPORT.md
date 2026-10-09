@@ -292,3 +292,52 @@ The dashboard in `frontend/` is built by a Claude Code cloud session, managed by
 - `run_d1`'s result: `findings` with `column` per finding, as in the brief. The one-line summary also accepts `location.column` or `id`.
 - `profile_dataset`'s result: `rows` (a number) and `columns` (an object), for "N rows, M columns".
 - Errors as `{"detail": "..."}`. The 2-minute browser timeout is well above the brief's 40 s worst case.
+
+---
+
+## CP3 · 1/3 · 21:04 IST, 9 Oct
+**Commit message:** `feat(dashboard): add top navigation and the command-center theme`
+**Branch:** `feat/dashboard-redteam` (from `main` at `eecf845`), with a PR into `main` for Abel after commit 3. This follows Abel's "command center" dashboard prompt.
+
+**What I built**
+- **Sticky top navbar:** 🕷️ SpiderSense, the page links, a health dot and a STRICT|ASSIST toggle.
+  - The active link is underlined in cyan.
+  - Links for this PR are **ML Audit** and **Agent**. The Red-Team Simulator joins in commit 2; Overview and Data-Flow Guard come with the second PR, so no link points at a page that doesn't exist yet.
+  - Under 900 px the links collapse behind a **Menu** button.
+- **Hash routing** without a library (`src/router.js`): `parseHash`, `hrefFor`, `navigate`, and a `useHashRoute` hook built on `useSyncExternalStore` and `hashchange`.
+  - Routes are `#/audit`, `#/findings` and `#/agent`. Back and Forward work, and an unknown or empty hash falls back to the default page.
+  - The route table is pure data in `src/routes.js`, so it can be tested; the components are mapped in `src/pages/index.js`.
+- **Health dot** from `GET /api/health`, re-checked every 15 s with a 5 s timeout: green "API online", red "API offline", grey while checking.
+- **Mode toggle:** global state in `App`, passed to every page as `mode`. The Red-Team page (commit 2) uses it.
+- **ML Audit** has a small tab row (Run audit · Findings) and the audit status pill that used to sit in the old header. The Audit, Findings and Agent pages work as before.
+- **Theme:**
+  - near-black `#07090d` with a faint 32 px grid;
+  - panels `#0d1117` with `#1f2937` borders and a soft cyan glow on hover or focus;
+  - one meaning per colour: red `#e23b3b`, green `#22c55e`, amber `#f59e0b`, cyan `#22d3ee`;
+  - system sans-serif text, and system monospace for tool names, args and IDs;
+  - visible cyan focus rings (`:focus-visible`);
+  - `prefers-reduced-motion` switches every animation and transition off.
+  - **Contrast:** red `#e23b3b` text on `#0d1117` is 4.44:1, just under WCAG AA (4.5). So red **text** uses `#f26464` (6.1:1), while fills and borders keep `#e23b3b`. The others: green 8.3, amber 8.8, cyan 10.5, muted grey 7.7.
+
+**Files changed**
+- New: `frontend/src/router.js`, `frontend/src/routes.js`, `frontend/src/useHealth.js`, `frontend/src/AuditTabs.jsx`, `frontend/tests/router.test.js`, and the mocks `frontend/src/mock/redteam_strict.json`, `redteam_assist.json`, `redteam_scenarios.json` (used from commit 2; see below)
+- Changed: `frontend/src/App.jsx` (navbar, routing, health, mode), `frontend/src/pages/index.js` (component map), `frontend/src/pages/AuditPage.jsx` and `FindingsPage.jsx` (tabs + pill), `frontend/src/api.js` (`getHealth`), `frontend/src/styles.css`, `frontend/CLOUD_REPORT.md`
+
+**How I checked it**
+- `npm test`: **32/32** (5 new router tests: parsing, sub-paths and queries, fallbacks, `hrefFor`, and route-table consistency). `npm run build` passes.
+- **Mocks from the real backend.** As the prompt says, I checked out `origin/feat/dataflow-guard-decoding` (`e33171b`) as a separate worktree, ran `uv sync` and `run_suite('strict')` / `run_suite('assist')`, and dumped the 21 scenarios from `redteam.scenarios.ALL` (the same fields as `GET /api/redteam/scenarios`). No backend file was edited.
+  - **strict:** no guard 9/9 attacks succeed, allowlist only 9/9, guard **0/9**; normal tasks 12/12, 12/12, **11/12** (b_reply_to_sender is blocked by design); guard overhead p50 0.052 ms over 51 calls.
+  - **assist:** the guard's attack success rate ranges 0–0.444, because 4 of 9 attacks and 1 of 12 normal tasks are held for a human.
+  - **No `denied_by_allowlist` outcome occurs in this suite.** The UI still handles it.
+- Headless Chromium at 1366×768, against that backend running unchanged from the worktree, with no page errors:
+  - the health dot reads "API online"; the toggle switches STRICT → ASSIST (`aria-pressed`);
+  - the titanic demo routes to `#/findings` (Findings tab active, red pill), the Agent link routes to `#/agent`, and Back returns to `#/findings`;
+  - `#/nope` falls back to the Audit page; Tab shows a solid cyan focus ring;
+  - at 600 px the links hide behind Menu and open on click.
+
+**Open problems**
+- The prompt says to keep the "safety panels, D9 chips, demo tags" on the ML pages, but **they were never built**. The brief's "CP2 polish" step (`feat/dashboard-safety-ui`) didn't happen, and `main` has none of it. The ML pages are restyled and otherwise unchanged. Adding them needs its own branch and the pre-approved message `feat(dashboard): reframe the dashboard around ai safety`. Abel to decide.
+- The CP3 brief section is still only on the unmerged branch `docs/brief-redteam`.
+
+**What the backend needs**
+- Nothing new. `/api/health` already works.

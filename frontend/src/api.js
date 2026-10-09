@@ -17,6 +17,10 @@ async function request(path, options) {
   return body
 }
 
+export function getHealth() {
+  return request('/health', { signal: AbortSignal.timeout(5000) })
+}
+
 export function getDemoDatasets() {
   return request('/demo-datasets')
 }

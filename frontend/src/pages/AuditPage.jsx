@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { auditDemo, auditUpload, getDemoDatasets } from '../api.js'
 import { parseCsvHeader } from '../lib.js'
+import AuditTabs from '../AuditTabs.jsx'
 
 const OPTIONAL = [
   { key: 'split_col', label: 'Split column', hint: 'values like train/test' },
@@ -9,7 +10,7 @@ const OPTIONAL = [
 ]
 const EMPTY_COLUMNS = { target: '', split_col: '', group_col: '', time_col: '' }
 
-export default function AuditPage({ onAudit }) {
+export default function AuditPage({ audit, onAudit }) {
   const [demos, setDemos] = useState(null)
   const [demosError, setDemosError] = useState('')
   const [file, setFile] = useState(null)
@@ -72,6 +73,7 @@ export default function AuditPage({ onAudit }) {
 
   return (
     <section>
+      <AuditTabs current="audit" audit={audit} />
       <h1>Audit</h1>
 
       <h2>Demo datasets</h2>
