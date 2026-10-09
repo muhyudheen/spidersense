@@ -5,6 +5,7 @@ description = "SpiderSense backend: deterministic checks for silently broken ML 
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.143.0",
+    "google-genai>=2.29.0",
     "pandas>=3.0.6",
     "python-multipart>=0.0.32",  # file uploads in POST /api/audit
     "scikit-learn>=1.9.1",
