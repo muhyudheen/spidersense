@@ -1,0 +1,89 @@
+# LeakLens: an automated auditor for silently broken ML pipelines
+
+TatHack '26 finale · **Track 2: Safe & Trustworthy AI** · 30-hour build · team muhyudheen + abeltjoseph2005-art
+Working name, which can change. Plan written 9 Oct 2026, 10:50 IST.
+
+## Goal
+**Catch the bugs that make an ML model look good while it's wrong: target leakage, train/test contamination, unevaluated models, unsafe model files. Show the evidence, generate a failing test for each bug, and explain it in plain English without the explanation itself hallucinating.**
+
+Why us: in the prelim we were handed a model that ran fine and was silently broken. We found its leakage by hand (the news score was computed from the delay it predicted), plus 130 other silent bugs. LeakLens automates that audit.
+
+The track asks for "data leakage, model auditing, hallucinations, prompt injection, unsafe tool usage". We cover all five:
+| Track keyword | Where in LeakLens |
+|---|---|
+| Data leakage | Detectors D1–D4 |
+| Model auditing | D5–D7, the benchmark scoreboard |
+| Hallucinations | The LLM explainer must cite evidence; claims it can't back up are dropped (G1) |
+| Prompt injection | Audited files are untrusted data; injection-like text is flagged as a finding (G2) |
+| Unsafe tool usage | We never execute uploaded code (static analysis only), and model pickles are opcode-scanned before any load (D8) |
+
+## How it works
+```
+Upload: dataset (CSV) + target column [+ split / group / time columns] [+ training script .py/.ipynb] [+ model file]
+   │
+   ├─ Data detectors (deterministic, pandas/sklearn)        D1–D3, D5
+   ├─ Static code analysis (Python AST, never executed)     D4, D6
+   ├─ Model-file scanner (pickle opcodes, no unpickling)    D8
+   └─ Interval check, if predictions are given              D7
+   ▼
+Findings: {id, detector, severity, evidence (numbers, rows, line numbers), fix}
+   ├─ Generated pytest file: one test per finding, fails on the bug
+   ├─ LLM explainer (Gemini, OpenRouter fallback, template fallback offline), grounded and validated (G1, G2)
+   └─ Dashboard + exportable report (Markdown/PDF)
+```
+**Core rule:** detection is deterministic and reproducible. The LLM only explains and never decides whether a bug exists, so a judge gets the same verdict every run.
+
+## Detectors (priority order)
+| ID | Detects | How |
+|---|---|---|
+| D1 | **Target leakage** (feature derived from the label) | Each feature alone predicts the target too well (cross-validated single-feature AUC/R² of a depth-2 tree), plus a near-functional relation (mutual information). Flags with the evidence. |
+| D2 | **Train/test contamination** | Exact and near-duplicate rows across splits. The same entity (group column) in both splits. |
+| D3 | **Temporal leakage** | Train rows later than test rows; features with timestamps after the label time. |
+| D4 | **Preprocessing fitted before the split** | AST: `fit`/`fit_transform` on the full data before `train_test_split`; target encoding on all rows. |
+| D5 | **Unseen categories silently mapped** | Test categories missing from train; AST pattern of a "fallback to the first class" encoder. |
+| D6 | **Evaluation hygiene** | AST: the test split is created but never scored; metrics imported but unused; random split where a group or time column exists. |
+| D7 | **Interval miscalibration** | Quantile coverage vs nominal (p85 should cover about 85%). |
+| D8 | **Unsafe model file** | Scan the pickle opcodes for dangerous imports (`os.system`, `eval`, `subprocess`, …) without loading the file. |
+| G1 | **Explainer hallucination guard** | The LLM must return JSON whose every claim cites a finding ID, and every number it states must appear in that finding's evidence. Anything that fails is dropped. The validator's drop count is shown. |
+| G2 | **Prompt-injection guard** | Code and comments go to the LLM as quoted data. Injection-like text in the uploads ("ignore previous instructions…") becomes a finding itself. |
+
+## Proof that it works (what makes us beat strong competitors)
+1. **LeakBench:** a seeded generator of about 25 small pipelines, each with one known planted bug (D1–D6, D8), plus clean ones. The dashboard shows **recall per detector and false positives on the clean pipelines**. Numbers, not claims.
+2. **Real case:** the organizers' own prelim model (Supplychainer `Code/real_dataset_builder.py` + `ML_Model_Real.py`). LeakLens flags the leaked `NLP_Severity_Score` (DS4), the unused test split (MR2) and the random split (MR4), the bugs we found by hand in the prelim.
+3. **Fix loop:** apply the suggested fix → re-audit → the finding turns green, and the generated test passes.
+4. **Our own tests:** test-first, like the prelim (tests committed failing, then one commit per feature).
+
+## Stack
+- **Backend:** Python 3.13, FastAPI, pandas, scikit-learn, `ast`, `pickletools`, pytest, uv.
+- **LLM:** Gemini as primary (key in `.env`, never committed), OpenRouter as fallback (low credit, so last resort), and a template fallback so **the demo never depends on Wi-Fi**. Responses are cached.
+- **Frontend:** React + Vite (the teammate's stack from the prelim), with charts for the evidence.
+
+## Roles
+- **muhyudheen:** detectors, the LeakBench design, the LLM guard logic, the pitch.
+- **abeltjoseph2005-art:** the dashboard (upload, findings list, evidence charts, scoreboard, before/after view), report export UI.
+- **Claude:** pair-programs the code with tests, keeps `AI_USAGE.md` and `CLAUDE_MINUTES.md` up to date.
+- **Humans only:** the team's moving minutes document (Claude never writes or edits it), and answering the judges.
+
+## Timeline: judges every 4 hours
+Times are **tentative**, assuming the start (H0) at 11:00 IST on 9 Oct. Replace them with the official schedule.
+| Checkpoint | Time (IST) | What judges must see working |
+|---|---|---|
+| H0–H1 | 11:00–12:00 | Repo, scope locked, roles, skeleton (FastAPI + Vite), `/health` |
+| **CP1 (H4)** | **15:00** | Upload CSV → D1 + D2 → findings JSON → bare dashboard list. **Live: D1 catches the prelim's leaked NLP feature.** |
+| **CP2 (H8)** | **19:00** | D3–D6 including AST script analysis; findings with line numbers; LeakBench generator v1 |
+| **CP3 (H12)** | **23:00** | LLM explainer with G1/G2 guards and offline fallback; Markdown report export |
+| **CP4 (H16)** | **03:00** | LeakBench scoreboard (recall, false positives); D8 pickle scanner; evidence charts |
+| **CP5 (H20)** | **07:00** | Generated pytest per finding; fix → re-audit → green (before/after) |
+| **CP6 (H24)** | **11:00** | D7, polish, second real-world case, robustness (big CSVs, bad inputs) |
+| **CP7 (H28)** | **15:00** | **Feature freeze.** README, AI_USAGE final, pitch rehearsed, backup demo video |
+| Final | 17:00 | Presentation |
+
+**Sleep, staggered** so someone is always present for judges: the teammate sleeps about H13–H16 (00:00–03:00), muhyudheen about H16.5–H19.5 (03:30–06:30).
+
+**Scope rule:** if a checkpoint slips, drop from the bottom of the detector table (D7, then D8), never the benchmark or the real-case demo.
+
+## For each judge visit (2 minutes)
+1. **Since last visit:** what we said we'd do, and what's done (show it live).
+2. **One number:** e.g. "LeakBench recall 18/20, 0 false positives on 5 clean pipelines".
+3. **Next 4 hours:** the plan.
+4. **A trade-off we made, and why** (e.g. "the LLM never decides, only explains").
