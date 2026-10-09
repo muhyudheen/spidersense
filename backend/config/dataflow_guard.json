@@ -1,0 +1,34 @@
+{
+  "dataflow_guard": {
+    "enabled": true,
+    "mode": "strict",
+    "thresholds": {"command_containment": 0.6, "private_overlap_min": 8},
+    "egress_allowlist": {"domains": ["mycompany.example"], "emails": []}
+  },
+  "tools": {
+    "profile_dataset":   {"output": {"integrity": "untrusted", "confidentiality": "private"}},
+    "run_d1":            {"output": {"integrity": "untrusted", "confidentiality": "private"}},
+    "run_d9":            {"output": {"integrity": "untrusted", "confidentiality": "private"}},
+    "send_report_email": {"external": true, "sinks": {"to": "destination", "body": "outbound_content"}},
+
+    "web_fetch":         {"output": {"integrity": "untrusted", "confidentiality": "public"},
+                          "external": true, "sinks": {"url": "outbound_content"}},
+    "read_inbox":        {"output": {"integrity": "untrusted", "confidentiality": "private"}},
+    "search_docs":       {"output": {"integrity": "untrusted", "confidentiality": "private"}},
+    "read_file":         {"output": {"integrity": "untrusted", "confidentiality": "private"}},
+    "read_customer_db":  {"output": {"integrity": "trusted", "confidentiality": "private"}},
+    "get_contacts":      {"output": {"integrity": "trusted", "confidentiality": "private"}},
+    "write_scratch":     {"output": {"integrity": "trusted", "confidentiality": "public"}},
+    "read_scratch":      {"output": {"integrity": "untrusted", "confidentiality": "private"}},
+    "send_email":        {"external": true, "sinks": {"to": "destination", "cc": "destination", "bcc": "destination",
+                                                      "subject": "outbound_content", "body": "outbound_content"}},
+    "http_request":      {"external": true, "sinks": {"url": "destination", "body": "outbound_content"}},
+    "make_payment":      {"external": true, "sinks": {"payee_upi": "financial", "account_no": "financial",
+                                                      "note": "outbound_content"}},
+    "run_shell":         {"sinks": {"cmd": "command"}}
+  },
+  "defaults": {
+    "unknown_tool_output": {"integrity": "untrusted", "confidentiality": "private"},
+    "unknown_tool": {"external": true, "treat_all_string_args_as": ["destination", "outbound_content"]}
+  }
+}
