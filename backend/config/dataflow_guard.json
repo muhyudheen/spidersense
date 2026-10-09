@@ -25,7 +25,7 @@
     "http_request":      {"external": true, "sinks": {"url": "destination", "body": "outbound_content"}},
     "make_payment":      {"external": true, "sinks": {"payee_upi": "financial", "account_no": "financial",
                                                       "note": "outbound_content"}},
-    "run_shell":         {"sinks": {"cmd": "command"}}
+    "run_shell":         {"external": true, "sinks": {"cmd": "command"}}
   },
   "defaults": {
     "unknown_tool_output": {"integrity": "untrusted", "confidentiality": "private"},
