@@ -8,6 +8,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from agent import run_agent
 from d1 import check_d1
 from d9 import check_d9
+from redteam.live import BY_ID as LIVE_SCENARIOS, run_live
 from redteam.runner import run_suite
 from redteam.scenarios import ALL as REDTEAM_SCENARIOS
 
@@ -108,3 +109,16 @@ def redteam_run(mode: str = "strict"):
     if mode not in ("strict", "assist"):
         raise HTTPException(400, "mode must be 'strict' or 'assist'")
     return run_suite(mode)
+
+
+@app.post("/api/redteam/live/{scenario_id}")
+def redteam_live(scenario_id: str, config: str = "allowlist_plus_dataflow", mode: str = "strict"):
+    """A real Gemini model plays OfficeBot on one scenario (mock tools only). Falls back to the scripted replay."""
+    if mode not in ("strict", "assist"):
+        raise HTTPException(400, "mode must be 'strict' or 'assist'")
+    if scenario_id not in LIVE_SCENARIOS:
+        raise HTTPException(404, f"unknown scenario: {scenario_id}")
+    try:
+        return run_live(scenario_id, config, mode)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
