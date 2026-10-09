@@ -171,3 +171,19 @@ test('replay: other outcomes and a normal task end green in every lane', async (
   const friction = matrixRows(STRICT, SCENARIOS).find((r) => r.id === 'b_reply_to_sender')
   assert.deepEqual(replayPlan(friction).lanes.map((l) => l.verdict.text), ['DONE', 'DONE', 'BLOCKED'])
 })
+
+test('incident feed: every guard finding across scenarios, newest step first, with counts per check', async () => {
+  const { actionsByCheck, checkCounts, feedIncidents } = await import('../src/redteam.js')
+  const feed = feedIncidents(STRICT)
+  // the strict run's guard findings: canary 4, hijacked 7, private (block) 7 + (warn) 1, injected 1, secret 1
+  assert.equal(feed.length, 21)
+  assert.deepEqual(checkCounts(feed), [
+    { check: 'canary_leak', count: 4 }, { check: 'hijacked_destination', count: 7 },
+    { check: 'injected_command', count: 1 }, { check: 'private_leak', count: 8 }, { check: 'secret_pattern', count: 1 },
+  ])
+  for (let i = 1; i < feed.length; i++) assert.ok(feed[i - 1].step >= feed[i].step, 'newest step first')
+  assert.ok(feed.every((f) => STRICT.results.some((r) => r.scenario === f.scenario && r.config === GUARD_CONFIG)))
+  assert.deepEqual(actionsByCheck(feed).private_leak, { block: 7, warn: 1 })
+  // assist: hijacked destinations are held for a human instead of blocked
+  assert.deepEqual(actionsByCheck(feedIncidents(ASSIST)).hijacked_destination, { escalate: 7 })
+})

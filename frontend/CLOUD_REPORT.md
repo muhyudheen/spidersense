@@ -456,3 +456,96 @@ The dashboard in `frontend/` is built by a Claude Code cloud session, managed by
 
 **What the backend needs**
 - Nothing new.
+
+---
+
+## After CP3 · 1/2 · 21:33 IST, 9 Oct
+**Commit message:** `feat(dashboard): add the overview page`
+**Branch:** `feat/dashboard-overview` (from `main` at `ef930a9`, after PR #15 was merged with a merge commit). Abel's decisions on PR #15: keep **HELD** for held attacks; skip the safety UI for now.
+
+**What I built**
+- **Overview page** (`#/`, also `#/overview`): now the landing page and the first navbar link. The 🕷️ brand links to it.
+  - **Hero:** "Your AI agent can be tricked. **SpiderSense stops the data from leaving.**", with a two-line explanation (static text) and a **▶ Run the simulator** button. The button runs `POST /api/redteam/run?mode=<current mode>`.
+  - **Four KPI tiles that count up**, all from the run's `metrics`:
+    - **Allowlist only:** x / 9 attacks got through;
+    - **With Data-Flow Guard:** y / 9 (in assist mode, also "up to N / 9 if a human approves every held call");
+    - **Normal work completed:** z / 12, with the guard on;
+    - **the guard's median time per call** (p50 ms, with p95 and the number of calls).
+  - Each tile's colour follows its own number: red as soon as one attack got through, green when none did, cyan for time.
+  - **Before any run** for the current mode the tiles show "—" with "Run the simulator".
+  - A **"How it works" strip**: Read → Label → Check → Block (static text).
+  - **Feature cards** for the Red-Team Simulator and ML Audit. The Data-Flow Guard card arrives with its page in the next commit, so no link points at a missing page.
+- **One shared run** (`src/useRedteam.js`): the last run per mode lives in `App`, so the Overview's run also fills the Red-Team page without a second request. The Red-Team page now runs the suite only when the current mode has no run yet; its Run button still re-runs.
+- **Count-up** (`src/useCountUp.js`): about 0.9 s, eased, using `requestAnimationFrame`. **With reduced motion it shows the final number at once.**
+
+**Files changed**
+- New: `frontend/src/pages/OverviewPage.jsx`, `frontend/src/useRedteam.js`, `frontend/src/useCountUp.js`, `frontend/tests/overview.test.js`
+- Changed: `frontend/src/redteam.js` (`overviewKpis`, `countUpValue`), `frontend/src/pages/RedTeamPage.jsx` (uses the shared run), `frontend/src/App.jsx` (shared run; brand links to `#/`), `frontend/src/routes.js`, `frontend/src/pages/index.js`, `frontend/src/styles.css`, `frontend/CLOUD_REPORT.md`
+
+**How I checked it**
+- `npm test`: **51/51**. The 4 new tests:
+  - KPIs from the strict mock: 9/9 red, 0/9 green, 11/12, p50 and "51 calls";
+  - assist adds "up to 4";
+  - one attack getting through turns the guard tile red;
+  - `countUpValue` easing, end value and decimals.
+- `npm run build` passes.
+- **Headless Chromium at 1366×768,** against the real backend (`feat/dataflow-guard-decoding`, run unchanged from a temporary worktree), with no page errors:
+  - Before a run: four "—" tiles. After Run: mid-count `4 / 9, 0 / 9, 5 / 12, 0.036`, ending at `9 / 9, 0 / 9, 11 / 12` and the live p50.
+  - Switching to ASSIST shows "—" until its run, then "up to 4 / 9 if a human approves every held call".
+  - Opening the Red-Team page after a run made **0 extra run requests** (the shared run).
+  - **Reduced motion:** the final values appear at once.
+  - The hero, Run button, four tiles and the start of "How it works" fit on one 1366×768 screen.
+
+**Open problems**
+- None new. The red-team endpoints are still only on the backend's guard branches; without them the pages fall back to the saved real run, marked "demo data".
+
+**What the backend needs**
+- Nothing new.
+
+---
+
+## After CP3 · 2/2 · 21:35 IST, 9 Oct
+**Commit message:** `feat(dashboard): add the data-flow guard page with the incident feed`
+
+**What I built** (`#/guard`, the navbar's third link; the Overview gets a matching feature card)
+- **"How it decides"** is static text, **checked line by line against the guard's code and config** on `feat/dataflow-guard-decoding` (`dataflow_guard/labels.py`, `guard.py`, `extract.py`, `config/dataflow_guard.json`):
+  - **Label 1, trust:** *trusted* = the user's request, the contact list, the customer database. *Untrusted* = web pages, inbox emails, documents and files, the scratchpad.
+    - My first draft called internal files "trusted"; the config labels `read_file` and `search_docs` untrusted, so I corrected it.
+  - **Label 2, privacy:** *private* = the customer database, contacts, inbox, internal documents and files, canaries. *Public* = fetched web pages.
+  - **Sinks:** destination, financial, command, outbound content, with the backend's own examples.
+  - **The five checks as cards:** canary leak · hijacked/unverified destination · injected command · private data leak · secret pattern (API, AWS, JWT, private key, Aadhaar, PAN). Each says what it catches.
+    - **Each card also shows what the check actually did in the last run**, computed from the findings, e.g. "In the last strict run: 7 × BLOCK" or, in assist, "7 × HOLD FOR HUMAN".
+  - **Strictest wins:** BLOCK > HOLD FOR HUMAN > WARN > ALLOW. In assist mode, a hijacked destination or a private leak is held instead of blocked (the backend's `_strict()`).
+  - **Tricks it undoes:** base64, hex, URL encoding, zero-width characters, Cyrillic and Greek look-alike letters (`extract.py`).
+  - **No AI inside the guard:** `guard.py` says "Deterministic: no LLM calls."
+- **Live incident feed:** every finding the guard made in the last run of the current mode, across all scenarios, **newest step first**, as compact cards (action, check, tool.arg, step, the reason, and the scenario).
+  - **Filter chips per check with counts computed from the run.**
+  - Clicking a card opens that scenario on the Red-Team page (`#/redteam/<id>`).
+  - It uses the shared run; with none for this mode it runs the suite, and **▶ Run again** re-runs it. Demo data is tagged as before.
+
+**Files changed**
+- New: `frontend/src/pages/GuardPage.jsx`, `frontend/docs/screenshots/overview-1366x768.png`, `overview-before-run-1366x768.png`, `guard-1366x768.png`, `guard-incident-feed.png`
+- Changed: `frontend/src/redteam.js` (`CHECK_ORDER`, `feedIncidents`, `checkCounts`, `actionsByCheck`, `ACTION_LABELS`), `frontend/src/pages/OverviewPage.jsx` (Guard card), `frontend/src/routes.js`, `frontend/src/pages/index.js`, `frontend/src/styles.css`, `frontend/tests/redteam.test.js`, `frontend/CLOUD_REPORT.md`
+
+**How I checked it**
+- `npm test`: **52/52**. The new feed test runs on the captured strict run:
+  - 21 findings; counts per check: canary 4, hijacked 7, injected 1, private 8, secret 1;
+  - sorted newest step first, all from the guard config;
+  - private leak = 7 block + 1 warn; in assist, hijacked = 7 held.
+- `npm run build` passes.
+- Headless Chromium at 1366×768, against the real backend (temporary worktree, unchanged), with no page errors:
+  - the navbar is now Overview · Red-Team Simulator · **Data-Flow Guard*** · ML Audit · Agent;
+  - the check cards show the live counts, and the filters show live counts;
+  - "Injected command" filters to 1 card, and clicking it opens `#/redteam/command_injection`;
+  - in ASSIST the cards switch to "7 × HOLD FOR HUMAN" and similar;
+  - the Overview shows three feature cards.
+- **Observation about the backend, not a frontend bug:** I ran the strict suite 8 more times through the API.
+  - The **headline numbers never change**: 0/9 attacks through, 11/12 normal tasks.
+  - The **total number of findings varies between 20 and 22**, in the private-leak block and secret-pattern counts.
+  - The cause is `dataflow_guard/canary.py`: the canaries are fresh random values every run (`secrets.token_hex`, random names). That's by design, but it means the feed's counts can differ slightly between live runs and the screenshots or mocks. The page always shows whatever the current run says.
+
+**Open problems**
+- The finding counts vary slightly between runs (above). For a demo, say "about 20 findings", not an exact number.
+
+**What the backend needs**
+- **Optional:** a fixed canary seed for demos would make the incident counts identical on every run.
