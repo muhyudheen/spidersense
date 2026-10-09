@@ -1,7 +1,12 @@
 import { checkAgentRun, checkAudit, errorMessage } from './lib.js'
+import { checkRedteamRun } from './redteam.js'
+import mockRedteamStrict from './mock/redteam_strict.json' with { type: 'json' }
+import mockRedteamAssist from './mock/redteam_assist.json' with { type: 'json' }
+import mockRedteamScenarios from './mock/redteam_scenarios.json' with { type: 'json' }
 
 // All calls go to /api, which the Vite dev server proxies to the backend on 127.0.0.1:8000.
-// The mock responses in src/mock/ are used only by the tests (tests/api.test.js).
+// The audit and agent mocks in src/mock/ are used only by the tests. The red-team mocks (captured from the
+// real backend) are also the fallback when the backend can't be reached; the page then says "demo data".
 
 // Errors carry the HTTP status (0 when the backend could not be reached), so callers can tell cases apart.
 async function request(path, options) {
@@ -71,4 +76,32 @@ export function runAgentUpload(file, target, goal) {
   form.append('target', target)
   if (goal && goal.trim()) form.append('goal', goal.trim())
   return agentRequest('/agent', form)
+}
+
+// ---- Red-team simulator (CP3) ----
+
+// The backend could not be reached: a network error, or the Vite proxy's 502/503/504.
+const unreachable = (e) => e.status === 0 || [502, 503, 504].includes(e.status)
+
+// Each result carries `demo: true` when it came from the mock instead of the API.
+export async function getRedteamScenarios() {
+  try {
+    return { scenarios: await request('/redteam/scenarios'), demo: false }
+  } catch (e) {
+    if (unreachable(e)) return { scenarios: mockRedteamScenarios, demo: true }
+    throw e
+  }
+}
+
+export async function runRedteam(mode) {
+  try {
+    const run = checkRedteamRun(await request(`/redteam/run?mode=${encodeURIComponent(mode)}`, { method: 'POST' }))
+    return { run, demo: false }
+  } catch (e) {
+    if (unreachable(e)) return { run: mode === 'assist' ? mockRedteamAssist : mockRedteamStrict, demo: true }
+    if (e.status === 404 && e.message === 'Not Found') {
+      throw new Error('The backend has no red-team endpoint (POST /api/redteam/run). Update backend/ to the latest main and restart it.')
+    }
+    throw e
+  }
 }

@@ -24,3 +24,14 @@ export function useHashRoute(known, fallback) {
 export function navigate(id) {
   window.location.hash = hrefFor(id)
 }
+
+// The part after the route id: "#/redteam/exfil_email" → "exfil_email" ('' when there is none).
+export function parseHashParam(hash) {
+  return decodeURIComponent(String(hash || '').replace(/^#\/?/, '').split('?')[0].split('/')[1] || '')
+}
+
+// The current hash's param; re-renders when the hash changes.
+export function useHashParam() {
+  const hash = useSyncExternalStore(subscribe, () => window.location.hash)
+  return parseHashParam(hash)
+}

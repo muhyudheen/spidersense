@@ -3,9 +3,9 @@ import { PAGE_COMPONENTS } from './pages/index.js'
 import { DEFAULT_ROUTE, NAV, ROUTES } from './routes.js'
 import { hrefFor, navigate, useHashRoute } from './router.js'
 import { useHealth } from './useHealth.js'
+import ModeToggle from './ModeToggle.jsx'
 
 const ROUTE_IDS = ROUTES.map((r) => r.id)
-const MODES = ['strict', 'assist']
 
 export default function App() {
   const routeId = useHashRoute(ROUTE_IDS, DEFAULT_ROUTE)
@@ -44,20 +44,13 @@ export default function App() {
             <span className="health-dot" aria-hidden="true" />
             {health === 'online' ? 'API online' : health === 'offline' ? 'API offline' : 'API…'}
           </span>
-          <div className="mode-toggle" role="group" aria-label="Data-Flow Guard mode">
-            {MODES.map((m) => (
-              <button key={m} className={mode === m ? `mode-opt active mode-${m}` : 'mode-opt'}
-                      aria-pressed={mode === m} onClick={() => setMode(m)}>
-                {m.toUpperCase()}
-              </button>
-            ))}
-          </div>
+          <ModeToggle mode={mode} setMode={setMode} />
         </div>
       </header>
 
       <main className="main">
         {/* onAudit shows the result on Findings; setAudit only updates it (the Agent page shows its own) */}
-        <Page audit={audit} onAudit={onAudit} setAudit={setAudit} mode={mode} health={health} />
+        <Page audit={audit} onAudit={onAudit} setAudit={setAudit} mode={mode} setMode={setMode} health={health} />
       </main>
     </div>
   )

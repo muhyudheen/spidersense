@@ -32,3 +32,11 @@ test('the route table is consistent: unique ids, every nav entry has a route, th
   for (const r of ROUTES) assert.ok(NAV.some((n) => n.id === r.nav), `route ${r.id} belongs to a nav entry`)
   assert.ok(ids.includes(DEFAULT_ROUTE))
 })
+
+test('parseHashParam reads the part after the route id', async () => {
+  const { parseHashParam } = await import('../src/router.js')
+  assert.equal(parseHashParam('#/redteam/exfil_email'), 'exfil_email')
+  assert.equal(parseHashParam('#/redteam'), '')
+  assert.equal(parseHashParam('#/redteam/b%20x?y=1'), 'b x')
+  assert.equal(parseHashParam(''), '')
+})
