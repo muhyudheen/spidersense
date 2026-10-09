@@ -22,6 +22,15 @@ SECRET_PATTERNS = {   # run on the raw value (not lowercased)
 }
 
 
+def _as_text(value):
+    """An argument as text. Lists and objects are flattened, so a recipient inside ["..."] is still checked."""
+    if isinstance(value, (list, tuple, set)):
+        return ", ".join(_as_text(v) for v in value)
+    if isinstance(value, dict):
+        return ", ".join(f"{k}: {_as_text(v)}" for k, v in value.items())
+    return "" if value is None else str(value)
+
+
 def _excerpt(value, limit=120):
     """Truncate, and mask real secrets (canaries are fake, so they stay visible as evidence)."""
     text = str(value)
@@ -63,9 +72,10 @@ class DataFlowGuard:
         return Action.BLOCK if self.cfg.mode == "strict" else Action.ESCALATE
 
     def _decide(self, tool, args):
+        args = {a: _as_text(v) for a, v in args.items()}   # a model may send lists or objects: never skip them
         spec = self.cfg.tool(tool)
         sinks = self.cfg.sinks_for(tool, args)
-        strings = {a: str(v) for a, v in args.items() if isinstance(v, (str, int, float)) and str(v).strip()}
+        strings = {a: v for a, v in args.items() if v.strip()}
         findings = []
 
         # A. canaries: any string argument of an external tool, plus command sinks. Blocks in every mode.
