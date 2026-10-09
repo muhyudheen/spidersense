@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getRedteamScenarios, runRedteam } from '../api.js'
 import IncidentCard from '../IncidentCard.jsx'
 import ModeToggle from '../ModeToggle.jsx'
+import ReplayArena from '../ReplayArena.jsx'
 import {
   ASSIST_RANGE_TIP, CONFIG_LABELS, CONFIGS, GUARD_CONFIG, categoryCounts, chipFor, incidentsFor, keyArg, matrixRows,
   outcomeBadge, pct, scoreboard,
@@ -16,7 +17,9 @@ export default function RedTeamPage({ mode, setMode }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState('all')
+  const [speed, setSpeed] = useState(1)
   const selectedParam = useHashParam()
+  const arenaRef = useRef(null)
 
   async function start(m) {
     setBusy(true)
@@ -35,6 +38,10 @@ export default function RedTeamPage({ mode, setMode }) {
   // The suite takes about a second, so it runs on arrival and again when the mode changes
   useEffect(() => { start(mode) }, [mode])
   useEffect(() => { getRedteamScenarios().then((s) => setScenarios(s.scenarios), () => {}) }, [])
+  // Picking a scenario in the matrix brings its replay into view
+  useEffect(() => {
+    if (selectedParam) arenaRef.current?.scrollIntoView?.({ block: 'start', behavior: 'smooth' })
+  }, [selectedParam])
 
   const rows = run ? matrixRows(run, scenarios) : []
   const selected = rows.find((r) => r.id === selectedParam) || rows[0]
@@ -56,6 +63,12 @@ export default function RedTeamPage({ mode, setMode }) {
             {busy ? 'Running…' : '▶ Run'}
           </button>
           <ModeToggle mode={mode} setMode={setMode} big />
+          <div className="speed" role="group" aria-label="Replay speed">
+            {[0.5, 1, 2].map((v) => (
+              <button key={v} className={speed === v ? 'speed-opt active' : 'speed-opt'} aria-pressed={speed === v}
+                      onClick={() => setSpeed(v)}>{v}×</button>
+            ))}
+          </div>
           {demo && <span className="demo-tag" title="The backend could not be reached, so this is a saved run from the real backend">demo data</span>}
         </div>
       </div>
@@ -68,6 +81,11 @@ export default function RedTeamPage({ mode, setMode }) {
           <div className="scoreboard">
             {cards.map((c) => <ScoreCard key={c.config} card={c} mode={run.mode} />)}
             <ScoreChart cards={cards} />
+          </div>
+
+          {/* Keyed by mode and scenario, so a new choice replays from the start */}
+          <div ref={arenaRef} className="arena-anchor">
+            {selected && <ReplayArena key={`${run.mode}-${selected.id}`} row={selected} speed={speed} />}
           </div>
 
           <div className="rt-body">

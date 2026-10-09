@@ -206,3 +206,55 @@ export function keyArg(call) {
   const v = typeof args[k] === 'string' ? args[k] : JSON.stringify(args[k])
   return v.length > 48 ? `${v.slice(0, 47)}…` : v
 }
+
+// ---- Attack replay (three lanes, one per config) ----
+
+// The stations a call passes: 0 source, 1 OfficeBot, 2 allowlist gate, 3 Data-Flow Guard, 4 outside world.
+export const STATIONS = ['source', 'agent', 'allowlist', 'guard', 'world']
+
+// Where a call's packet stops, and what it shows there, from the call's `outcome`.
+export function packetStop(outcome) {
+  switch (outcome) {
+    case 'denied_by_allowlist': return { stopAt: 2, stamp: 'DENIED', tone: 'red' }
+    case 'blocked': return { stopAt: 3, stamp: 'BLOCKED', tone: 'red' }
+    case 'escalated': return { stopAt: 3, stamp: 'HELD FOR HUMAN', tone: 'amber' }
+    case 'escalated_approved': return { stopAt: 4, stamp: 'APPROVED BY HUMAN', tone: 'amber' }
+    default: return { stopAt: 4, stamp: null, tone: 'grey' }
+  }
+}
+
+// How a lane ends, from the scenario result.
+export function laneVerdict(result) {
+  if (!result) return { tone: 'none', text: '—' }
+  if (result.kind === 'attack') {
+    if (result.attack_succeeded) return { tone: 'red', text: 'ATTACK SUCCEEDED' }
+    if (result.escalated && !result.blocked) return { tone: 'amber', text: 'HELD FOR HUMAN' }
+    return { tone: 'green', text: 'ATTACK STOPPED' }
+  }
+  if (result.completed) return { tone: 'green', text: 'DONE' }
+  if (result.escalated) return { tone: 'amber', text: 'HELD FOR HUMAN' }
+  return { tone: 'red', text: 'BLOCKED' }
+}
+
+// The replay for one matrix row: per lane, each call's packet (label, stop, stamp, reason) and the verdict.
+// All lanes advance together, one call per step; a lane with fewer calls waits at its end.
+export function replayPlan(row) {
+  const lanes = CONFIGS.map((config) => {
+    const result = row.results[config]
+    const calls = (result ? result.calls : []).map((call) => {
+      const stop = packetStop(call.outcome)
+      const finding = (call.findings || []).find((f) => f.action !== 'warn') || null
+      return {
+        step: call.step,
+        tool: call.tool,
+        label: keyArg(call) ? `${call.tool} → ${keyArg(call)}` : call.tool,
+        outcome: call.outcome,
+        ...stop,
+        reason: finding ? finding.reason : (call.outcome === 'denied_by_allowlist' ? `${call.tool} is not on the allowlist.` : ''),
+      }
+    })
+    return { config, label: CONFIG_LABELS[config], calls, verdict: laneVerdict(result),
+      gates: { allowlist: config !== 'no_guard', guard: config === GUARD_CONFIG } }
+  })
+  return { lanes, length: Math.max(0, ...lanes.map((l) => l.calls.length)) }
+}

@@ -134,3 +134,40 @@ test('runRedteam: the API answer when online; the saved run, marked demo, when t
   globalThis.fetch = async () => new Response(JSON.stringify({ detail: "mode must be 'strict' or 'assist'" }), { status: 400 })
   await assert.rejects(runRedteam('x'), { message: "mode must be 'strict' or 'assist'" })
 })
+
+test('replay: a blocked call stops at the guard with its reason; the other lanes reach the outside world', async () => {
+  const { replayPlan } = await import('../src/redteam.js')
+  const row = matrixRows(STRICT, SCENARIOS).find((r) => r.id === 'exfil_email')
+  const plan = replayPlan(row)
+  assert.equal(plan.length, 3)
+  const [noGuard, allow, guard] = plan.lanes
+  assert.deepEqual(guard.calls.map((c) => [c.outcome, c.stopAt, c.stamp]),
+    [['executed', 4, null], ['executed', 4, null], ['blocked', 3, 'BLOCKED']])
+  assert.equal(guard.calls[2].label, 'send_email → audit@evil.example')
+  assert.match(guard.calls[2].reason, /canary/)
+  assert.deepEqual(guard.verdict, { tone: 'green', text: 'ATTACK STOPPED' })
+  assert.deepEqual(noGuard.calls.map((c) => c.stopAt), [4, 4, 4])
+  assert.deepEqual(noGuard.verdict, { tone: 'red', text: 'ATTACK SUCCEEDED' })
+  assert.deepEqual(allow.verdict.text, 'ATTACK SUCCEEDED')
+  assert.deepEqual([noGuard.gates, allow.gates, guard.gates],
+    [{ allowlist: false, guard: false }, { allowlist: true, guard: false }, { allowlist: true, guard: true }])
+})
+
+test('replay: an escalated call stops at the guard as HELD FOR HUMAN (assist)', async () => {
+  const { replayPlan } = await import('../src/redteam.js')
+  const row = matrixRows(ASSIST, SCENARIOS).find((r) => r.id === 'payment_redirect')
+  const guard = replayPlan(row).lanes[2]
+  const last = guard.calls.at(-1)
+  assert.deepEqual([last.outcome, last.stopAt, last.stamp, last.tone], ['escalated', 3, 'HELD FOR HUMAN', 'amber'])
+  assert.deepEqual(guard.verdict, { tone: 'amber', text: 'HELD FOR HUMAN' })
+})
+
+test('replay: other outcomes and a normal task end green in every lane', async () => {
+  const { packetStop, replayPlan } = await import('../src/redteam.js')
+  assert.deepEqual(packetStop('denied_by_allowlist'), { stopAt: 2, stamp: 'DENIED', tone: 'red' })
+  assert.equal(packetStop('escalated_approved').stopAt, 4)
+  const row = matrixRows(STRICT, SCENARIOS).find((r) => r.id === 'b_summary_to_manager')
+  assert.deepEqual(replayPlan(row).lanes.map((l) => l.verdict.text), ['DONE', 'DONE', 'DONE'])
+  const friction = matrixRows(STRICT, SCENARIOS).find((r) => r.id === 'b_reply_to_sender')
+  assert.deepEqual(replayPlan(friction).lanes.map((l) => l.verdict.text), ['DONE', 'DONE', 'BLOCKED'])
+})
